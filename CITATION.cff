@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Krechetova"
+    given-names: "Varvara"
+title: "A Comparative Analysis of LLM Agents for Geospatial Tasks"
+version: 1.0.0
+date-released: 2025-03-22
+url: "https://github.com/Solirinai/GeoBenchX"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Krechetova"
+      given-names: "Varvara"
+  title: "A Comparative Analysis of LLM Agents for Geospatial Tasks"
+  year: 2025
