@@ -168,17 +168,14 @@ cython_debug/
 *.docx
 
 archive/
-scratch/
+scratch/*
+!/scratch/.keep
 # Ignore everything in the results folder
 results/*
 
-# But don't ignore the 'raw cells outputs' subfolder
-!/results/raw\ cells\ outputs/
-!/results/raw\ cells\ outputs/**
-
-# And don't ignore JSON files in the results root folder
-!/results/*.json
+# And don't ignore .keep file in the results root folder
+!/results/.keep
 
 # .vscode/*
-data/
+data/*
 !/data/README.md
