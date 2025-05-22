@@ -2,6 +2,7 @@ import random
 from datetime import datetime
 from io import StringIO
 
+
 from geobenchx.constants import ScoreValues
 
 
@@ -91,5 +92,3 @@ def compute_confusion_stats(scores_human, scores_LLM, labels=ScoreValues.values(
                          columns=[f'LLM_{l}' for l in labels]),
             accuracy,
             accuracy_ci)
-
-

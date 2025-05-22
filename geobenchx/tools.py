@@ -1,9 +1,12 @@
 import os
+from dotenv import find_dotenv, load_dotenv
 import zipfile
 from typing import Annotated, Any, Dict, Literal, Union, List, Optional
 import random
 from pathlib import Path
 import ast
+import io
+import base64
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -33,9 +36,12 @@ from shapely.geometry import LineString
 
 from geobenchx.utils import get_dataframe_info
 
-DATA_CATALOG_PATH = r"data" 
-GEO_CATALOG_PATH = r"data"
-SCRATCH_PATH = r"scratch"
+
+_ = load_dotenv(find_dotenv())
+
+DATA_CATALOG_PATH = os.getenv('STATDATAPATH')
+GEO_CATALOG_PATH = os.getenv('GEODATAPATH')
+SCRATCH_PATH = os.getenv('SCRATCHPATH')
 
 DATA_CATALOG = {
     "Forest area (sq. km)": "API_AG.LND.FRST.K2_DS2_en_csv_v2_2627",
@@ -83,8 +89,8 @@ GEO_CATALOG = {
     }
 
 RASTER_CATALOG = {
-    "Accumulated snow cover season 2023-2024, USA, inches": "sfav2_CONUS_2023093012_to_2024093012.tif",
-    "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches": "sfav2_CONUS_2024093012_to_2025020312.tif",
+    "Accumulated snow cover season 2023-2024, USA, inches": "sfav2_CONUS_2023093012_to_2024093012_processed.tif",
+    "Accumulated snow cover season 2024-2025, USA, inches": "sfav2_CONUS_2024093012_to_2025052012_processed.tif",
     "Tibetan Plato South Asia flood extent, August 2018": "DFO_4665_From_20180802_to_20180810.tif",
     "Bangladesh population, 2018, people, resolution 1 km":"bgd_pd_2018_1km_UNadj.tif",
     "USA population 2020, people, resolution 1 km": "usa_ppp_2020_1km_Aggregated_UNadj.tif",
@@ -118,8 +124,8 @@ COLORMAPS = {
 # Define the state type
 class State(TypedDict):
     """Type definition for the graph state"""
-
     data_store: Dict[str, Any]  # Store for both DataFrames and GeoDataFrames
+    image_store: List[Dict[str, Any]] # Store for images to save to the coversation history
     messages: Annotated[list, add_messages]
     remaining_steps: RemainingSteps
     visualize: bool
@@ -1564,6 +1570,11 @@ def visualize_geographies(
         str: Status message with visualization details
     """
     try:
+
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+            
         # Default style if none provided
         default_style = {
             'color': 'red',
@@ -1660,6 +1671,20 @@ def visualize_geographies(
 
         # Remove axes
         ax.set_axis_off()
+
+        # Capture the figure as base64 before showing it
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        buf.close()
+
+        # Store the image in the state with metadata
+        state["image_store"].append({
+            "type": "map",
+            "description": f"Visualized {len(geodataframe_names)} layers",
+            "base64": img_base64
+        })     
 
         # Display if visualization is enabled
         if "visualize" in state and state['visualize']:
@@ -1855,14 +1880,14 @@ def generate_contours_display(
     raster_path: Annotated[str, "Path to the raster file"],
     output_filename: Annotated[str, "Name for the output shapefile"],
     contour_interval: Annotated[float, "Interval between contour lines"],
-    column_title: Annotated[str, "Name for the column containing contour values"],
+    column_title: Annotated[str, "Name for the column containing contour values, 10 characters maximum"],
     nodataval: Annotated[int, "Value to use for no-data pixels"],
     state: Annotated[dict, InjectedState],    
     output_geodataframe_name: Annotated[str, "Name for storing the resulting GeoDataFrame in state"],
     output_folder: Annotated[str, "Folder path for storing intermediate and output files"] = SCRATCH_PATH,    
     min_value: Annotated[float | None, "Minimum value for contours (if None, uses raster minimum)"] = None,
     max_value: Annotated[float | None, "Maximum value for contours (if None, uses raster maximum)"] = None,
-    cleanup_files: Annotated[bool, "Whether to remove temporary files after processing"] = True,
+    cleanup_files: Annotated[bool, "Whether to remove temporary files after processing"] = False,
     plot_result: Annotated[bool, "Whether to display the plot"] = True,
     plot_title: Annotated[str | None, "Title for the plot"] = None,
     colormap: Annotated[str, "Matplotlib colormap name"] = 'viridis',
@@ -1908,32 +1933,6 @@ def generate_contours_display(
         if raster_dataset is None:
             return "Error: Could not open raster dataset"
 
-        raster_band = raster_dataset.GetRasterBand(1)
-
-        # Get raster's no-data value for reference
-        raster_nodata = raster_band.GetNoDataValue()
-
-        # Read data into a numpy array to check min value
-        data = raster_band.ReadAsArray()
-        actual_min = np.min(data)
-
-        # Check if minimum value in raster is less than provided nodataval
-        if actual_min < nodataval:
-            nodata_message = (f"The raster's metadata indicates a no-data value of {raster_nodata}. " 
-                            if raster_nodata is not None else 
-                            "The raster does not have a no-data value defined in its metadata. ")
-            
-            return (f"Error: The minimum value in the raster ({actual_min}) is less than the provided no-data value ({nodataval}). "
-                    f"This suggests the no-data value may be incorrect. "
-                    f"{nodata_message}"
-                    f"Please use an appropriate no-data value that is less than the minimum valid data value.")
-        
-        # Get min/max values if not provided
-        if min_value is None or max_value is None:
-            stats = raster_band.GetStatistics(0, 1)
-            min_value = stats[0] if min_value is None else min_value
-            max_value = stats[1] if max_value is None else max_value
-
         # Create a temporary raster with filtered values
         temp_raster_path = os.path.join(output_folder, 'temp_filtered.tif')
         
@@ -1944,15 +1943,6 @@ def generate_contours_display(
         
         # Read the data into a numpy array
         data = temp_band.ReadAsArray()
-
-        # Ensure min_value is not equal to nodataval
-        if min_value == nodataval:
-            # Find the next valid value above nodataval
-            valid_values = data[data != nodataval]
-            if len(valid_values) > 0:
-                min_value = np.min(valid_values)
-            else:
-                return "Error: No valid data found in raster after filtering"
         
         # Create mask for values outside the range and set them to nodata
         mask = (data < min_value) | (data > max_value) | (data == nodataval)
@@ -2048,8 +2038,8 @@ def generate_contours_display(
                 plt.colorbar(
                     plt.cm.ScalarMappable(
                         norm=plt.Normalize(
-                            contour_gdf[column_title].min(),
-                            contour_gdf[column_title].max()
+                            vmin = min_value,
+                            vmax = max_value
                         ),
                         cmap=colormap
                     ),
@@ -2062,7 +2052,7 @@ def generate_contours_display(
                 plt.title(plot_title)
 
             # Add some basic styling
-            ax.set_aspect('equal')
+            # ax.set_aspect('equal')
             plt.grid(True, linestyle='--', alpha=0.6)
             
         if plot_result and "visualize" in state and state["visualize"]:
@@ -2442,7 +2432,8 @@ generate_contours_display_tool = StructuredTool.from_function(
     name='generate_contours_display',
     description='Creates contour lines from raster data using GDAL\'s ContourGenerate algorithm. \
         It returns a GeoDataFrame containing line geometries that represent areas of equal value with associated attributes. \
-        Tool supports customization of contour intervals, value ranges. Note, that common nodata values could be -99999, -9999, -32768, -999, -3.4e38.\
+        To get values for the function arguments, call get_raster_description_tool first.\
+        Tool supports customization of contour intervals, value ranges. Note, that common nodata values could be -99999, -9999, -32768, -999, -3.4e38  and assign function arguments accordingly.\
         The tool also produces a shapefile that can be optionally saved, optionally can visualize background raster and generated contour lines and customize styling.'
 )
 

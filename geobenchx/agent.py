@@ -88,7 +88,10 @@ tools = [
     calculate_column_statistics_tool
 ]
 
-def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT, max_steps: int = 25):
+def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT, max_steps: int = 25, capture_history=False):
+
+    # Initialize conversation history if capturing
+    conversation_history = [] if capture_history else None
 
     solution_steps = []
     # token_total = []
@@ -111,15 +114,17 @@ def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT,
     graph = create_react_agent(llm, tools=tools, state_schema=State, state_modifier=SYSTEM_PROMPT + RULES_PROMPT) 
 
     inputs = {
-    "messages": [("user", task_text)],
-    "data_store": {},
-    "visualize": True
-    }
+        "messages": [("user", task_text)],
+        "data_store": {},
+        "image_store": [],
+        "visualize": True
+        }
+
     config = {
         "max_concurrency": 1,
-        "recursion_limit": max_steps,
-
+        "recursion_limit": max_steps
         }
+    
     try:
         for s in graph.stream(inputs, stream_mode="values", config=config):
 
@@ -139,9 +144,24 @@ def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT,
                     step = Step(function_name = tool_call['name'], arguments = tool_call['args']) # to keep compatibility with get_solution_code() and the previous agent
                     #save step to solution 
                     solution_steps.append(step)
+
+            if capture_history:
+                conversation_history.append({"type": message.type, "content": message.content})
+
+            # Extract any images from state and add to conversation history
+            if "image_store" in s and s["image_store"]:
+                for img_data in s["image_store"]:
+                    conversation_history.append({
+                        'type': 'image',
+                        'content': img_data["base64"],
+                        'description': img_data.get("description", "Visualization")
+                    })
+                s["image_store"].clear() 
+
     except GraphRecursionError as e:
         print(f"Maximum recursion depth reached: {e}")                    
 
     solution = Solution(steps = solution_steps)
-    return solution, input_tokens, output_tokens
+    
+    return solution, input_tokens, output_tokens, conversation_history
 

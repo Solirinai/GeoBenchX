@@ -1,0 +1,147 @@
+import os
+import re
+import html
+import json
+from pathlib import Path
+from geobenchx.utils import get_solution_code
+
+def format_content_for_display(content):
+    """Format complex content structures for better readability in HTML"""
+
+    if isinstance(content, dict):
+        # Handle dictionary content types
+        if 'text' in content:
+            # If there's a text field, primarily display that
+            return content['text']
+        elif 'type' in content and content['type'] == 'tool_use':
+            # Format tool use in a more readable way
+            tool_info = f"Tool: {content.get('name', 'Unknown')}"
+            if 'input' in content and content['input']:
+                tool_info += f"\nInputs: {json.dumps(content['input'], indent=2)}"
+            return tool_info
+        else:
+            # For other dictionary types, format as pretty JSON
+            return json.dumps(content, indent=2)
+    elif isinstance(content, list):
+        # For lists, convert each item and join with newlines
+        return '\n'.join(str(format_content_for_display(item)) for item in content)
+    elif content is None:
+        return ""
+    else:
+        # For simple types, just convert to string
+        return str(content)
+        
+
+# Check if content is a list and convert it to a string if needed
+def safe_escape(content):
+    if isinstance(content, list):
+        # Join list elements with newlines
+        return html.escape('\n'.join(str(item) for item in content))
+    elif content is None:
+        return ""
+    else:
+        # Convert to string and escape
+        return html.escape(str(content))
+
+def save_conversation_to_html(task, conversation_history, run_folder):
+    """
+    Save the conversation history for a task to an HTML file.
+    
+    Args:
+        task: The task object
+        conversation_history: List of message exchanges and images
+        run_folder: Path to the run folder
+        
+    Returns:
+        str: Message indicating where the file was saved
+    """
+    html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>Task {task.task_ID} Conversation</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        .message {{ margin-bottom: 20px; padding: 10px; border-radius: 5px; }}
+        .user {{ background-color: #f0f0f0; padding: 15px;}}
+        .assistant {{ background-color: #e6f7ff; padding: 15px;}}
+        .tool-call {{ background-color: #fff3e0; padding: 15px; overflow-x: auto; }}
+        .tool-result {{ background-color: #e8f5e9; padding: 15px; overflow-x: auto; }}
+        .image {{background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px;}}
+        img {{ max-width: 100%; }}
+        pre {{ white-space: pre-wrap; }}
+        h1, h2 {{ color: #333; }}
+        .solution {{ background-color: #e8f5e9; padding: 15px; border-radius: 5px; margin-top: 20px; }}
+        .solution pre {{ background-color: #f5f5f5; padding: 10px; border-radius: 3px; }}
+        ul.message {{margin-bottom: 20px; padding: 15px; border-radius: 5px;}}
+    </style>
+</head>
+<body>
+    <h1>Task ID: {task.task_ID}</h1>
+    <div class="message">
+    <strong>Task Description:</strong>
+        <pre>{html.escape(task.task_text)}</pre>
+    </div>
+    
+    <h2>Conversation:</h2>
+"""
+    # Add each message in the conversation history
+    for entry in conversation_history:
+        if entry['type'] == 'human':
+            html_content += f"""<div class="message user">
+    <strong>User Message:</strong>
+    <pre>{format_content_for_display(entry['content'])}</pre>
+</div>
+"""
+        elif entry['type'] == 'ai':
+            html_content += f"""<div class="message assistant">
+    <strong>AI Message:</strong>
+    <pre>{format_content_for_display(entry['content'])}</pre>
+</div>
+"""
+        elif entry['type'] == 'tool':
+            html_content += f"""<div class="message tool-call">
+    <strong>Tool Response:</strong>
+    <pre>{format_content_for_display(entry['content'])}</pre>
+</div>
+"""
+        elif entry['type'] == 'tool_use':
+            html_content += f"""<div class="message tool-result">
+    <strong>Tool Call:</strong>
+    <pre>{format_content_for_display(entry['content'])}</pre>
+</div>
+"""
+        elif entry['type'] == 'image':
+            # Get description if available
+            description = entry.get('description', 'Generated Image')          
+            # Display base64 encoded image with metadata
+            html_content += f"""<div class="message image">
+        <strong>{description}:</strong><br>
+        <img src="data:image/png;base64,{entry['content']}" alt="{description}">
+</div>
+"""      
+    
+    # Add the final solution
+    if task.generated_solution:
+        solution_code = get_solution_code(task.generated_solution)
+        html_content += f"""<h2>Final Solution:</h2>
+<div class="solution">
+    <pre>{safe_escape(solution_code)}</pre>
+</div>
+
+<h3>Token Usage:</h3>
+<ul class="message">
+    <li>Input tokens: {task.generated_solution_input_tokens}</li>
+    <li>Output tokens: {task.generated_solution_output_tokens}</li>
+</ul>
+"""
+    
+    html_content += """</body>
+</html>
+"""
+    
+    # Write the HTML to a file
+    task_file = run_folder / f"task_{task.task_ID}.html"
+    with open(task_file, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    
+    return f"Saved conversation to {task_file}"

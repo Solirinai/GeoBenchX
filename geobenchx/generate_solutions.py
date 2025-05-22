@@ -1,16 +1,19 @@
 import time
+from datetime import datetime
 from tqdm import tqdm
 from typing import List
+from pathlib import Path
 # from geobenchx.agent import execute_task
 from geobenchx.agent import execute_task
 from geobenchx.utils import get_solution_code
 from geobenchx.constants import RESULTS_FOLDER
 from geobenchx.dataclasses import TaskSet
+from geobenchx.save_chats import save_conversation_to_html
 
 
 wait_time = 61
 
-def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_filename: str = None, max_steps: int =25, skip_solved = True) -> tuple[TaskSet, int]:
+def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_filename: str = None, max_steps: int =25, skip_solved = True, capture_history = False) -> tuple[TaskSet, int]:
     """
    Generates solution attempts for each unsolved task using an LLM.
 
@@ -30,6 +33,8 @@ def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_fi
    Skips tasks that already have a generated solution. Saves intermediate results to 
    the specified file if output_filename is provided.
     """
+    run_folder = Path(RESULTS_FOLDER) / Path(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) if capture_history else None
+    run_folder.mkdir(parents=True, exist_ok=True)
     tasks.metadata['model'] = model
     tasks.metadata['temperature'] = temperature
     total_input = 0
@@ -44,7 +49,7 @@ def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_fi
         try_count = 0
         while(not success):
             try:
-                solution, input_tokens, output_tokens = execute_task(task.task_text, temperature = temperature, model=model, max_steps=max_steps)
+                solution, input_tokens, output_tokens, conversation_history = execute_task(task.task_text, temperature = temperature, model=model, max_steps=max_steps, capture_history=capture_history)
                 print('='*30)
                 print(get_solution_code(solution))
                 print(f"Tokens used: input tokens {sum(input_tokens)}, output_tokens {sum(output_tokens)}")
@@ -58,6 +63,9 @@ def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_fi
                 if output_filename:
                     tasks.save_to_file(output_filename, folder=RESULTS_FOLDER)
                 success = True
+
+                save_conversation_to_html(task, conversation_history, run_folder)
+
             except Exception as e:
                 try_count += 1
                 print(repr(e))
