@@ -55,7 +55,7 @@ def execute_task_view(task: Task, index: int, file_name: str, tasks: TaskSet, fo
                 with redirect_stdout(output):
                     try:
                         # Execute the task
-                        generated_solution, _ = execute_task(task_text = task.task_text, temperature=TASK_EXECUTE_TEMPERATURE, model=TASK_EXECUTE_MODEL, max_steps=40)
+                        generated_solution, _, _, _ = execute_task(task_text = task.task_text, temperature=TASK_EXECUTE_TEMPERATURE, model=TASK_EXECUTE_MODEL, capture_history=False, max_steps=40)
                         st.session_state.generated_solution = generated_solution
                         
                         # Get all figures that were created

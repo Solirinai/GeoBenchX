@@ -149,7 +149,7 @@ def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT,
                 conversation_history.append({"type": message.type, "content": message.content})
 
             # Extract any images from state and add to conversation history
-            if "image_store" in s and s["image_store"]:
+            if capture_history and "image_store" in s and s["image_store"]:
                 for img_data in s["image_store"]:
                     conversation_history.append({
                         'type': 'image',

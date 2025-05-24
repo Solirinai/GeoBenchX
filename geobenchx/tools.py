@@ -399,6 +399,10 @@ def analyze_raster_overlap(
     }
     
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+        
         # Open both rasters
         with rasterio.open(raster1_path) as src1, rasterio.open(raster2_path) as src2:
             # Check CRS
@@ -498,6 +502,20 @@ def analyze_raster_overlap(
                 plt.colorbar(im, ax=ax, label='Value')
                 plt.title(f'Overlap Analysis: {os.path.basename(raster2_path)} values where {os.path.basename(raster1_path)} > 0')
                 
+                # Capture the figure as base64 before showing it
+                buf = io.BytesIO()
+                fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+                buf.seek(0)
+                img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                buf.close()
+
+                # Store the image in the state with metadata
+                state["image_store"].append({
+                    "type": "map",
+                    "description": f"Visualized overlap between {os.path.basename(raster2_path)} and {os.path.basename(raster1_path)}",
+                    "base64": img_base64
+                })    
+
                 if "visualize" in state and state['visualize']:
                     plt.show()
 
@@ -562,6 +580,10 @@ def get_values_from_raster_with_geometries(
     }
     
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+
         # Get geometries from the GeoDataFrame
         geodataframe = state["data_store"].get(geodataframe_name)        
         if geodataframe is None:
@@ -621,6 +643,21 @@ def get_values_from_raster_with_geometries(
                 
                 plt.colorbar(im, ax=ax, label='Value')
                 plt.title(f'Masked Raster with Total Value: {result["total_value"]:,.2f}')
+
+                # Capture the figure as base64 before showing it
+                buf = io.BytesIO()
+                fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+                buf.seek(0)
+                img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                buf.close()
+
+                # Store the image in the state with metadata
+                state["image_store"].append({
+                    "type": "map",
+                    "description": f"Visualized Masked Raster {os.path.basename(raster_path)} ",
+                    "base64": img_base64
+                }) 
+
                 if "visualize" in state and state['visualize']:
                     plt.show()
 
@@ -1004,6 +1041,10 @@ def make_choropleth_map(
     if "data_store" not in state:
         state["data_store"] = {}
 
+    # Initialize image store if needed
+    if "image_store" not in state:
+        state["image_store"] = []        
+
     geodataframe = state["data_store"].get(dataframe_name)
     
     fig, ax = plt.subplots(1, 1, figsize=(14, 8))
@@ -1030,6 +1071,20 @@ def make_choropleth_map(
 
     cbar = ax.get_figure().axes[-1]
     cbar.xaxis.set_major_formatter(formatter)
+
+    # Capture the figure as base64 before showing it
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    buf.close()
+
+    # Store the image in the state with metadata
+    state["image_store"].append({
+        "type": "map",
+        "description": f"Generated map visualizing {mappingkey} with {legendtext} legend",
+        "base64": img_base64
+    }) 
 
     if "visualize" in state and state['visualize']:
         plt.show()
@@ -1070,6 +1125,10 @@ def filter_points_by_raster_values(
         str: Status message with filtering results and statistics
     """
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+
         # Get points GeoDataFrame from state
         points_gdf = state["data_store"].get(points_geodataframe_name)
         if points_gdf is None:
@@ -1132,6 +1191,20 @@ def filter_points_by_raster_values(
                     plt.colorbar(im, ax=ax, label=value_column)
                     plt.title(f'Points with {value_column} {condition_desc}\n({len(filtered_gdf)} out of {len(points_gdf)} points)')
                     
+                    # Capture the figure as base64 before showing it
+                    buf = io.BytesIO()
+                    fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+                    buf.seek(0)
+                    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+                    buf.close()
+
+                    # Store the image in the state with metadata
+                    state["image_store"].append({
+                        "type": "map",
+                        "description": f"Generated map of points with {value_column} {condition_desc}\n({len(filtered_gdf)} out of {len(points_gdf)} points)",
+                        "base64": img_base64
+                    }) 
+
                     # Display the plot
                     if "visualize" in state and state['visualize']:
                         plt.show()     
@@ -1181,6 +1254,10 @@ def select_features_by_spatial_relationship(
         str: Status message with count of selected features and storage location
    """
    try:
+       # Initialize image store if needed
+       if "image_store" not in state:
+           state["image_store"] = []       
+
        # Get GeoDataFrames from state
        features_gdf = state["data_store"].get(features_geodataframe_name)
        reference_gdf = state["data_store"].get(reference_geodataframe_name)
@@ -1232,6 +1309,21 @@ def select_features_by_spatial_relationship(
            # Add legend and title
            ax.legend()
            plt.title(f'Features matching predicates: {", ".join(spatial_predicates)}')
+
+           # Capture the figure as base64 before showing it
+           buf = io.BytesIO()
+           fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+           buf.seek(0)
+           img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+           buf.close()
+
+           # Store the image in the state with metadata
+           state["image_store"].append({
+               "type": "map",
+               "description": f"Generated map of features matching predicates: {', '.join(spatial_predicates)}",
+               "base64": img_base64
+           })
+
            if "visualize" in state and state['visualize']:
                plt.show()
 
@@ -1445,6 +1537,9 @@ def make_heatmap(
         str: Status message with visualization details
     """
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
                
         # Get GeoDataFrame from state
         gdf = state["data_store"].get(geodataframe_name)
@@ -1509,6 +1604,22 @@ def make_heatmap(
             height=height,
             margin=dict(l=0, r=0, t=0, b=0)
         )
+
+        # Capture the figure as base64 before showing it
+        buf = io.BytesIO()
+        img_bytes = fig.to_image(format="png", width=width, height=height, scale=2)
+        img_base64 = base64.b64encode(img_bytes).decode('utf-8')
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        buf.close()
+
+        # Store the image in the state with metadata
+        state["image_store"].append({
+            "type": "map",
+            "description": f"Created interactive heatmap visualization from '{geodataframe_name}'.",
+            "base64": img_base64
+        })           
+
 
         # Prepare result message
         result_parts = [
@@ -1785,6 +1896,10 @@ def plot_contour_lines(
         str: Status message with operation results
     """
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+
         # Open raster with rasterio for better spatial handling
         with rasterio.open(raster_path) as src:
             # Read the data and flip vertically for matplotlib
@@ -1815,6 +1930,20 @@ def plot_contour_lines(
             if title:
                 plt.title(title)
             plt.colorbar(label='Value')
+
+            # Capture the figure as base64 before showing it
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+            buf.seek(0)
+            img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+            buf.close()
+
+            # Store the image in the state with metadata
+            state["image_store"].append({
+                "type": "map",
+                "description": f"Created contour lines with interval {interval}.",
+                "base64": img_base64
+            })             
 
             # Create empty lists for geometries and values
             geometries = []
@@ -1914,6 +2043,10 @@ def generate_contours_display(
         str: Status message with operation results
     """
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+
         # Validate input parameters
         if not output_folder:
             return "Error: output_folder must be specified"
@@ -2054,6 +2187,20 @@ def generate_contours_display(
             # Add some basic styling
             # ax.set_aspect('equal')
             plt.grid(True, linestyle='--', alpha=0.6)
+
+        # Capture the figure as base64 before showing it
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        buf.close()
+
+        # Store the image in the state with metadata
+        state["image_store"].append({
+            "type": "map",
+            "description": f"Created contour lines with interval {contour_interval}.",
+            "base64": img_base64
+        })      
             
         if plot_result and "visualize" in state and state["visualize"]:
             plt.show()
@@ -2107,6 +2254,10 @@ def make_bivariate_map(
         str: Status message with map generation details
     """
     try:
+        # Initialize image store if needed
+        if "image_store" not in state:
+            state["image_store"] = []
+
         # Get the GeoDataFrame from state
         gdf = state["data_store"].get(dataframe_name)
         if gdf is None:
@@ -2222,6 +2373,20 @@ def make_bivariate_map(
             'processed_data': gdf_copy
         }
         state["data_store"][output_variable_name] = result
+
+        # Capture the figure as base64 before showing it
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+        buf.seek(0)
+        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+        buf.close()
+
+        # Store the image in the state with metadata
+        state["image_store"].append({
+            "type": "map",
+            "description": f"Created bivariate choropleth map comparing {var1_name} and {var2_name}.",
+            "base64": img_base64
+        })  
 
         if "visualize" in state and state['visualize']:
             plt.show()

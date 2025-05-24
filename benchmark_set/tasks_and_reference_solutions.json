@@ -4,7 +4,9 @@
         {
             "task_ID": "TASK_250309_135125_364138",
             "task_text": "What is agriculture?",
-            "task_labels": ["Control question"],
+            "task_labels": [
+                "Control question"
+            ],
             "reference_solution_description": null,
             "reference_solutions": [
                 {
@@ -22,7 +24,9 @@
         {
             "task_ID": "TASK_250309_135125_299410",
             "task_text": "What are main agriculture cultures in Blefuscu?",
-            "task_labels": ["Control question"],
+            "task_labels": [
+                "Control question"
+            ],
             "reference_solution_description": null,
             "reference_solutions": [
                 {
@@ -40,7 +44,9 @@
         {
             "task_ID": "TASK_250309_135125_483163",
             "task_text": "What is a theodolite?",
-            "task_labels": ["Control question"],
+            "task_labels": [
+                "Control question"
+            ],
             "reference_solution_description": null,
             "reference_solutions": [
                 {
@@ -2505,15 +2511,6 @@
                 {
                     "steps": [
                         {
-                            "function_name": "reject_task",
-                            "arguments": {},
-                            "comment": null
-                        }
-                    ]
-                },
-                {
-                    "steps": [
-                        {
                             "function_name": "load_data",
                             "arguments": {
                                 "dataset": "Annual freshwater withdrawals, total (billion cubic meters)",
@@ -3280,7 +3277,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_968087",
-            "task_text": "Generate a heatmap of population density around major North American lakes",
+            "task_text": "Generate a heatmap of earthquake occurrences near railway lines in Canada.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -3290,9 +3287,61 @@
                 {
                     "steps": [
                         {
-                            "function_name": "reject_task",
-                            "arguments": {},
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Railway Network of North America",
+                                "output_geodataframe_name": "railways"
+                            },
                             "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Earthquakes occurences and magnitude March 15- February 14 2025",
+                                "output_geodataframe_name": "earthquakes"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "railways",
+                                "filters": "{\"COUNTRY\": [\"CA\"]}",
+                                "output_dataframe_name": "canada_railways"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "create_buffer",
+                            "arguments": {
+                                "geodataframe_name": "canada_railways",
+                                "buffer_size": 10000,
+                                "output_geodataframe_name": "railway_buffer"
+                            },
+                            "comment": "  generated solution to be considered a match if 'create_buffer' is used and 'buffer_size' is 25000 or less"
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "earthquakes",
+                                "reference_geodataframe_name": "railway_buffer",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "canada_earthquakes"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "canada_earthquakes",
+                                "value_column": "mag",
+                                "radius": 25,
+                                "map_style": "open-street-map",
+                                "output_html_name": "canada_earthquake_heatmap"
+                            },
+                            "comment": " 'map_style' and 'radius' can be different"
                         }
                     ]
                 }
@@ -3552,7 +3601,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_565545",
-            "task_text": "Create a heatmap of population density in Peruvian regions with the highest GDP",
+            "task_text": "Create a heatmap of earthquakes magnitude in Indonesia, Malaysia and Phillippines",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -3562,8 +3611,51 @@
                 {
                     "steps": [
                         {
-                            "function_name": "reject_task",
-                            "arguments": {},
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Earthquakes occurences and magnitude March 15- February 14 2025",
+                                "output_geodataframe_name": "earthquakes"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "filters": "{\"NAME_EN\": [\"Indonesia\", \"Malaysia\", \"Philippines\"]}",
+                                "output_dataframe_name": "sea_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "earthquakes",
+                                "reference_geodataframe_name": "sea_countries",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "sea_earthquakes",
+                                "plot_result": false
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "sea_earthquakes",
+                                "value_column": "mag",
+                                "radius": 25,
+                                "map_style": "carto-positron"
+                            },
                             "comment": null
                         }
                     ]
@@ -3606,7 +3698,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_655059",
-            "task_text": "Generate a heatmap of mineral facility density in regions with development projects",
+            "task_text": "Generate contour lines from Peru's population data and overlap with provincial borders and rivers in the country.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -3616,8 +3708,73 @@
                 {
                     "steps": [
                         {
-                            "function_name": "reject_task",
-                            "arguments": {},
+                            "function_name": "get_raster_path",
+                            "arguments": {
+                                "rasterdataset": "Peru population, 2018, 1 km resolution"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "get_raster_description",
+                            "arguments": {
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Provinces of Peru",
+                                "output_geodataframe_name": "peru_provinces"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Rivers in South America",
+                                "output_geodataframe_name": "sa_rivers"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "sa_rivers",
+                                "reference_geodataframe_name": "peru_provinces",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "peru_rivers"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "generate_contours_display",
+                            "arguments": {
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "output_filename": "peru_pop_contours",
+                                "contour_interval": 100,
+                                "column_title": "Population",
+                                "nodataval": -99999,
+                                "output_geodataframe_name": "peru_pop_contours",
+                                "plot_title": "Population Distribution in Peru (2018)",
+                                "min_value": 0,
+                                "max_value": 41000
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "visualize_geographies",
+                            "arguments": {
+                                "geodataframe_names": [
+                                    "peru_provinces",
+                                    "peru_rivers",
+                                    "peru_pop_contours"
+                                ],
+                                "layer_styles": "[{\"color\": \"lightgray\", \"alpha\": 0.5, \"label\": \"Provinces\"}, {\"color\": \"blue\", \"alpha\": 0.7, \"label\": \"Rivers\"}, {\"color\": \"red\", \"alpha\": 0.5, \"label\": \"Population Contours\"}]",
+                                "title": "Population Distribution, Rivers and Provinces of Peru (2018)"
+                            },
                             "comment": null
                         }
                     ]
@@ -4339,7 +4496,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_419069",
-            "task_text": "Generate a heatmap of USA population density in counties with reported tuberculosis cases",
+            "task_text": "Generate a heatmap of USA population density in counties with reported tuberculosis cases. ",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -4374,13 +4531,7 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": [
-                        {
-                            "function_name": "reject_task",
-                            "arguments": {},
-                            "comment": null
-                        }
-                    ]
+                    "steps": []
                 }
             ],
             "generated_solution": null,
@@ -4487,7 +4638,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_782046",
-            "task_text": "Create contour lines of population density around major rivers in South America",
+            "task_text": "Make a heatmap final size of fire incidents in USA.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -4495,13 +4646,7 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": [
-                        {
-                            "function_name": "reject_task",
-                            "arguments": {},
-                            "comment": null
-                        }
-                    ]
+                    "steps": []
                 }
             ],
             "generated_solution": null,
@@ -7531,7 +7676,7 @@
                     ]
                 }
             ],
-            "generated_solution":  null,
+            "generated_solution": null,
             "generated_solution_input_tokens": null,
             "generated_solution_output_tokens": null,
             "match_reasoning_LLM": null,
@@ -7667,78 +7812,78 @@
                 },
                 {
                     "steps": [
-                    {
-                        "function_name": "load_data",
-                        "arguments": {
-                            "dataset": "Fertility rate, births per woman",
-                            "output_dataframe_name": "fertility_data"
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Fertility rate, births per woman",
+                                "output_dataframe_name": "fertility_data"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "load_geodata",
-                        "arguments": {
-                            "geodataset": "Countries",
-                            "output_geodataframe_name": "countries_geo"
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries_geo"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "get_unique_values",
-                        "arguments": {
-                            "dataframe_name": "countries_geo",
-                            "column": "INCOME_GRP"
+                        {
+                            "function_name": "get_unique_values",
+                            "arguments": {
+                                "dataframe_name": "countries_geo",
+                                "column": "INCOME_GRP"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "merge_dataframes",
-                        "arguments": {
-                            "dataframe_name": "fertility_data",
-                            "geodataframe_name": "countries_geo",
-                            "statkey": "Country Name",
-                            "geokey": "NAME_EN",
-                            "output_dataframe_name": "fertility_by_income"
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "fertility_data",
+                                "geodataframe_name": "countries_geo",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "fertility_by_income"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "filter_categorical",
-                        "arguments": {
-                            "dataframe_name": "fertility_by_income",
-                            "filters": "{\"INCOME_GRP\": [\"1. High income: OECD\", \"2. High income: nonOECD\"]}",
-                            "output_dataframe_name": "high_income_fertility"
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "fertility_by_income",
+                                "filters": "{\"INCOME_GRP\": [\"1. High income: OECD\", \"2. High income: nonOECD\"]}",
+                                "output_dataframe_name": "high_income_fertility"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "filter_categorical",
-                        "arguments": {
-                            "dataframe_name": "fertility_by_income",
-                            "filters": "{\"INCOME_GRP\": [\"5. Low income\"]}",
-                            "output_dataframe_name": "low_income_fertility"
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "fertility_by_income",
+                                "filters": "{\"INCOME_GRP\": [\"5. Low income\"]}",
+                                "output_dataframe_name": "low_income_fertility"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "calculate_column_statistics",
-                        "arguments": {
-                            "dataframe_name": "high_income_fertility",
-                            "column_name": "2022",
-                            "output_variable_name": "high_income_stats"
+                        {
+                            "function_name": "calculate_column_statistics",
+                            "arguments": {
+                                "dataframe_name": "high_income_fertility",
+                                "column_name": "2022",
+                                "output_variable_name": "high_income_stats"
+                            },
+                            "comment": null
                         },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "calculate_column_statistics",
-                        "arguments": {
-                            "dataframe_name": "low_income_fertility",
-                            "column_name": "2022",
-                            "output_variable_name": "low_income_stats"
-                        },
-                        "comment": null
-                    }
-                ]
+                        {
+                            "function_name": "calculate_column_statistics",
+                            "arguments": {
+                                "dataframe_name": "low_income_fertility",
+                                "column_name": "2022",
+                                "output_variable_name": "low_income_stats"
+                            },
+                            "comment": null
+                        }
+                    ]
                 }
             ],
             "generated_solution": null,
@@ -11776,7 +11921,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_486122",
-            "task_text": "Generate contour lines from Peru's population data and overlap with flood extent from February 2018",
+            "task_text": "Generate a heatmap of mineral extraction facilities in regions with high water withdrawals in Africa. ",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -11786,8 +11931,177 @@
                 {
                     "steps": [
                         {
-                            "function_name": "reject_task",
-                            "arguments": {},
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Annual freshwater withdrawals, total (billion cubic meters)",
+                                "output_dataframe_name": "water_withdrawals"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Mineral extraction facilities in Africa",
+                                "output_geodataframe_name": "minerals"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "filters": "{\\'CONTINENT\\': [\\'Africa\\']}",
+                                "output_dataframe_name": "africa_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "water_withdrawals",
+                                "geodataframe_name": "africa_countries",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "africa_water"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "calculate_column_statistics",
+                            "arguments": {
+                                "dataframe_name": "africa_water",
+                                "column_name": "2021",
+                                "output_variable_name": "water_stats",
+                                "additional_quantiles": "[0.95]"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_numerical",
+                            "arguments": {
+                                "dataframe_name": "africa_water",
+                                "conditions": "2021 >= 18.29",
+                                "output_dataframe_name": "high_water_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "minerals",
+                                "reference_geodataframe_name": "high_water_countries",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "high_water_minerals"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "high_water_minerals",
+                                "value_column": "DsgAttr07",
+                                "radius": 20,
+                                "map_style": "carto-positron"
+                            },
+                            "comment": null
+                        }
+                    ]
+                },
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Annual freshwater withdrawals, total (% of internal resources)",
+                                "output_dataframe_name": "water_withdrawals"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Mineral extraction facilities in Africa",
+                                "output_geodataframe_name": "minerals"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "filters": "{\\'CONTINENT\\': [\\'Africa\\']}",
+                                "output_dataframe_name": "africa_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "water_withdrawals",
+                                "geodataframe_name": "africa_countries",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "africa_water"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "calculate_column_statistics",
+                            "arguments": {
+                                "dataframe_name": "africa_water",
+                                "column_name": "2021",
+                                "output_variable_name": "water_stats",
+                                "additional_quantiles": "[0.95]"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_numerical",
+                            "arguments": {
+                                "dataframe_name": "africa_water",
+                                "conditions": "2021 >= 555.66",
+                                "output_dataframe_name": "high_water_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "minerals",
+                                "reference_geodataframe_name": "high_water_countries",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "high_water_minerals"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "high_water_minerals",
+                                "value_column": "DsgAttr07",
+                                "radius": 25,
+                                "map_style": "carto-positron"
+                            },
                             "comment": null
                         }
                     ]
@@ -12160,7 +12474,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_695398",
-            "task_text": "Create a heatmap of population density in Bangladesh regions affected by the 2018 flood.",
+            "task_text": "Create heatmap of TB cases in states with available data.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -12170,8 +12484,88 @@
                 {
                     "steps": [
                         {
-                            "function_name": "reject_task",
-                            "arguments": {},
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Incidence of Tuberculosis Disease, 2023, Massachusetts Counties",
+                                "output_dataframe_name": "ma_tb"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Incidence of Tuberculosis Disease, 2023, New York State Counties",
+                                "output_dataframe_name": "ny_tb"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "USA counties borders",
+                                "output_geodataframe_name": "us_counties"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "us_counties",
+                                "filters": "{\"STATEFP\": [\"36\", \"25\"]}",
+                                "output_dataframe_name": "ny_ma_counties"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "get_centroids",
+                            "arguments": {
+                                "geodataframe_name": "ny_ma_counties",
+                                "output_geodataframe_name": "ny_ma_centroids"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "ny_ma_centroids",
+                                "value_column": "2023 cases",
+                                "radius": 25,
+                                "map_style": "carto-positron",
+                                "output_html_name": "tb_heatmap"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "ma_tb",
+                                "geodataframe_name": "ny_ma_centroids",
+                                "statkey": "County",
+                                "geokey": "NAME",
+                                "output_dataframe_name": "ma_merged"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "ny_tb",
+                                "geodataframe_name": "ma_merged",
+                                "statkey": "County",
+                                "geokey": "NAME",
+                                "output_dataframe_name": "ny_ma_merged"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "ny_ma_merged",
+                                "value_column": "2023 cases",
+                                "radius": 25,
+                                "map_style": "carto-positron",
+                                "output_html_name": "tb_heatmap_2023"
+                            },
                             "comment": null
                         }
                     ]
@@ -12214,7 +12608,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_112207",
-            "task_text": "Create a heatmap showing population density in Bangladesh and overlay it with railway lines.",
+            "task_text": "Create a heatmap showing railway station density in areas with high snow accumulation in the USA.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -12222,13 +12616,7 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": [
-                        {
-                            "function_name": "reject_task",
-                            "arguments": {},
-                            "comment": null
-                        }
-                    ]
+                    "steps": []
                 }
             ],
             "generated_solution": null,
@@ -12295,7 +12683,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_253892",
-            "task_text": "Create population density contours for areas affected by floods in Peru during February 2018.",
+            "task_text": "Create a heatmap of seaport density in regions with high GDP growth in Latin America.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -12303,13 +12691,7 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": [
-                        {
-                            "function_name": "reject_task",
-                            "arguments": {},
-                            "comment": null
-                        }
-                    ]
+                    "steps": []
                 }
             ],
             "generated_solution": null,
