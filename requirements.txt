@@ -35,3 +35,4 @@ pydantic
 streamlit
 statsmodels
 scikit-learn
+kaleido
