@@ -1511,7 +1511,7 @@ def make_heatmap(
     zoom_level: Annotated[int, "Initial zoom level (1-20)"] = None,
     radius: Annotated[int, "Radius of influence for each point"] = 10,
     map_style: Annotated[
-        Literal["open-street-map", "carto-positron", "carto-darkmatter", "stamen-terrain", "stamen-toner"],
+        Literal["open-street-map", "carto-positron", "carto-darkmatter"],
         "Base map style to use"
     ] = "open-street-map",
     width: Annotated[int, "Width of the map in pixels"] = 1000,

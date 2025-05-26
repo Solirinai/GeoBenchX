@@ -33,8 +33,11 @@ def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_fi
    Skips tasks that already have a generated solution. Saves intermediate results to 
    the specified file if output_filename is provided.
     """
-    run_folder = Path(RESULTS_FOLDER) / Path(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) if capture_history else None
-    run_folder.mkdir(parents=True, exist_ok=True)
+
+    if capture_history:
+        run_folder = Path(RESULTS_FOLDER) / Path(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) if capture_history else None
+        run_folder.mkdir(parents=True, exist_ok=True)
+        
     tasks.metadata['model'] = model
     tasks.metadata['temperature'] = temperature
     total_input = 0

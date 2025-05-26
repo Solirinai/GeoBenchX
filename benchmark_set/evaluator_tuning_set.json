@@ -1085,87 +1085,6 @@
             "match_score_Human": 2
         },
         {
-            "task_ID": "TASK_250309_135125_565545",
-            "task_text": "Create a heatmap of population density in Peruvian regions with the highest GDP",
-            "task_labels": [
-                "Heatmaps, Contour Lines",
-                "Task Set 04"
-            ],
-            "reference_solution_description": null,
-            "reference_solutions": [
-                {
-                    "steps": [
-                        {
-                            "function_name": "reject_task",
-                            "arguments": {},
-                            "comment": null
-                        }
-                    ]
-                }
-            ],
-            "generated_solution": {
-                "steps": [
-                    {
-                        "function_name": "load_data",
-                        "arguments": {
-                            "dataset": "Regional GDP in departments (provinces) of Peru, constant prices 2007, thousand of soles",
-                            "output_dataframe_name": "peru_gdp"
-                        },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "get_raster_path",
-                        "arguments": {
-                            "rasterdataset": "Peru population, 2018, 1 km resolution"
-                        },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "load_geodata",
-                        "arguments": {
-                            "geodataset": "Regions of Peru",
-                            "output_geodataframe_name": "peru_regions"
-                        },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "get_values_from_raster_with_geometries",
-                        "arguments": {
-                            "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
-                            "geodataframe_name": "peru_regions",
-                            "output_variable_name": "population_by_region"
-                        },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "get_centroids",
-                        "arguments": {
-                            "geodataframe_name": "peru_regions",
-                            "output_geodataframe_name": "peru_centroids"
-                        },
-                        "comment": null
-                    },
-                    {
-                        "function_name": "make_heatmap",
-                        "arguments": {
-                            "geodataframe_name": "peru_centroids",
-                            "value_column": "Shape_Area",
-                            "map_style": "carto-positron",
-                            "radius": 30,
-                            "plot_title": "Population Density in Peru's Regions (2018)"
-                        },
-                        "comment": null
-                    }
-                ]
-            },
-            "generated_solution_input_tokens": null,
-            "generated_solution_output_tokens": null,
-            "match_reasoning_LLM": "The reference solution is 'reject_task()', indicating that the task cannot be solved with the available tools and datasets. However, the candidate solution attempts to solve the task using several tools and datasets. Therefore, the candidate solution does not match the reference solution.\\n",
-            "match_score_LLM": 0,
-            "match_reasoning_Human": "Since there is only one reference solution and it is 'reject_task', the candidate solution should end with 'reject_task' to be considered a match. There is no 'reject_task' in candidate solution, so it is not a match.",
-            "match_score_Human": 0
-        },
-        {
             "task_ID": "TASK_250309_135125_304935",
             "task_text": "Visualize water usage patterns in Great Lakes region of Africa",
             "task_labels": [
@@ -5555,6 +5474,425 @@
             "match_score_LLM": 0,
             "match_reasoning_Human": "If reference solution is reject_task, the candidate solution should end with the same step, not be empty ",
             "match_score_Human": 0
+        },
+                {
+            "task_ID": "TASK_250309_135125_868995",
+            "task_text": "Compare healthcare expenditure across Middle Eastern countries.",
+            "task_labels": [
+                "Process, Merge, Visualize",
+                "Task Set 02"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": []
+                },
+                {
+                    "steps": [
+                        {
+                            "function_name": "reject_task",
+                            "arguments": {},
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
+        },
+        {
+            "task_ID": "TASK_250309_135125_565545",
+            "task_text": "Create a heatmap of earthquakes magnitude in Indonesia, Malaysia and Phillippines",
+            "task_labels": [
+                "Heatmaps, Contour Lines",
+                "Task Set 04"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Earthquakes occurences and magnitude March 15- February 14 2025",
+                                "output_geodataframe_name": "earthquakes"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "filters": "{\\'NAME_EN\\': [\\'Indonesia\\', \\'Malaysia\\', \\'Philippines\\']}",
+                                "output_dataframe_name": "sea_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "earthquakes",
+                                "reference_geodataframe_name": "sea_countries",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "sea_earthquakes",
+                                "plot_result": false
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "sea_earthquakes",
+                                "value_column": "mag",
+                                "radius": 25,
+                                "map_style": "carto-positron"
+                            },
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
+        },
+        {
+            "task_ID": "TASK_250309_135125_478472",
+            "task_text": "Map digital literacy rates in Southeast Asian nations.",
+            "task_labels": [
+                "Process, Merge, Visualize",
+                "Task Set 02"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": [
+                        {
+                            "function_name": "reject_task",
+                            "arguments": {},
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
+        },
+        {
+            "task_ID": "TASK_250309_135125_861416",
+            "task_text": "Visualize regional economic patterns using GDP per capita.",
+            "task_labels": [
+                "Merge, Visualize",
+                "Task Set 01"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "GDP per capita (current US$)",
+                                "output_dataframe_name": "gdp_data"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries_geo"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "gdp_data",
+                                "geodataframe_name": "countries_geo",
+                                "statkey": "Country Code",
+                                "geokey": "WB_A3",
+                                "output_dataframe_name": "gdp_map"
+                            },
+                            "comment":"If 'statkey' is 'Country Name', then 'geokey' should be 'NAME_EN'. If 'statkey' is 'Country Code', then 'geokey' can be either 'WB_A3' or 'ISO_A3'."
+                        },
+                        {
+                            "function_name": "make_choropleth_map",
+                            "arguments": {
+                                "dataframe_name": "gdp_map",
+                                "mappingkey": "2023",
+                                "legendtext": "GDP per capita (current US$), 2023",
+                                "colormap": "Economics"
+                            },
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
+        },
+                {
+            "task_ID": "TASK_250309_135125_130168",
+            "task_text": "How many mineral extraction facilities in Africa are located in countries with negative net migration?",
+            "task_labels": [
+                "Spatial operations",
+                "Task Set 03"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Mineral extraction facilities in Africa",
+                                "output_geodataframe_name": "facilities"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Net migration",
+                                "output_dataframe_name": "migration"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "migration",
+                                "geodataframe_name": "countries",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "countries_migration"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_numerical",
+                            "arguments": {
+                                "dataframe_name": "countries_migration",
+                                "conditions":"CONTINENT == 'Africa' and `2023` < 0",
+                                "output_dataframe_name": "africa_negative_migration"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "facilities",
+                                "reference_geodataframe_name": "africa_negative_migration",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "facilities_in_negative_migration"
+                            },
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
+        },
+        {
+            "task_ID": "TASK_250309_135125_720013",
+            "task_text": "Show electric consumption in G7 and BRICS nations",
+            "task_labels": [
+                "Process, Merge, Visualize",
+                "Task Set 02"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Electric power consumption (kWh per capita)",
+                                "output_dataframe_name": "electricity_data"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "electricity_data",
+                                "geodataframe_name": "countries",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "merged_data"
+                            },
+                            "comment":"If 'statkey' is 'Country Name', then 'geokey' should be 'NAME_EN'. If 'statkey' is 'Country Code', then 'geokey' can be either 'WB_A3' or 'ISO_A3'."
+                        },
+                        {
+                            "function_name": "get_unique_values",
+                            "arguments": {
+                                "dataframe_name": "merged_data",
+                                "column": "Country Name"
+                            },
+                            "comment":"Column 'NAME_EN' is also acceptable"
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "merged_data",
+                                "filters": {
+                                    "NAME_EN": [
+                                        "Canada",
+                                        "France",
+                                        "Germany",
+                                        "Italy",
+                                        "Japan",
+                                        "United Kingdom",
+                                        "United States",
+                                        "Brazil",
+                                        "Russian Federation",
+                                        "India",
+                                        "China",
+                                        "South Africa",
+                                        "Egypt, Arab Rep.",
+                                        "Ethiopia",
+                                        "Iran, Islamic Rep.",
+                                        "United Arab Emirates",
+                                        "Indonesia"
+                                    ]
+                                },
+                                "output_dataframe_name": "g7_brics_data"
+                            },
+                            "comment":" The column for 'get_unique_values' and 'filter_categorical' should be the same. Column 'NAME_EN' is also acceptable"
+                        },
+                        {
+                            "function_name": "make_choropleth_map",
+                            "arguments": {
+                                "dataframe_name": "g7_brics_data",
+                                "mappingkey": "2014",
+                                "legendtext": "Electric power consumption (kWh per capita)",
+                                "colormap": "Economics"
+                            },
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
+        },
+        {
+            "task_ID": "TASK_250309_135125_908870",
+            "task_text": "Visualize total population distribution by country.",
+            "task_labels": [
+                "Merge, Visualize",
+                "Task Set 01"
+            ],
+            "reference_solution_description": null,
+            "reference_solutions": [
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Population, total",
+                                "output_dataframe_name": "pop_data"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries_geo"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "pop_data",
+                                "geodataframe_name": "countries_geo",
+                                "statkey": "Country Code",
+                                "geokey": "WB_A3",
+                                "output_dataframe_name": "merged_pop"
+                            },
+                            "comment":"If 'statkey' is 'Country Name', then 'geokey' should be 'NAME_EN'. If 'statkey' is 'Country Code', then 'geokey' can be either 'WB_A3' or 'ISO_A3'."
+                        },
+                        {
+                            "function_name": "make_choropleth_map",
+                            "arguments": {
+                                "dataframe_name": "merged_pop",
+                                "mappingkey": "2023",
+                                "legendtext": "Total Population (2023)",
+                                "colormap": "Population"
+                            },
+                            "comment": null
+                        }
+                    ]
+                }
+            ],
+            "generated_solution": null,
+            "generated_solution_input_tokens": null,
+            "generated_solution_output_tokens": null,
+            "match_reasoning_LLM": null,
+            "match_score_LLM": null,
+            "match_reasoning_Human": null,
+            "match_score_Human": null
         }
     ]
 }

@@ -4523,7 +4523,7 @@
         },
         {
             "task_ID": "TASK_250309_135125_822439",
-            "task_text": "Create a heatmap of earthquake occurrences in highly populated Western US counties",
+            "task_text": "Create a heatmap of earthquake occurrences in Pacific US states.",
             "task_labels": [
                 "Heatmaps, Contour Lines",
                 "Task Set 04"
@@ -4531,7 +4531,56 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": []
+                    "steps": [
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "USA states borders",
+                                "output_geodataframe_name": "us_states"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Earthquakes occurences and magnitude March 15- February 14 2025",
+                                "output_geodataframe_name": "earthquakes"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "us_states",
+                                "filters": "{\\'NAME\\': [\\'Alaska\\', \\'Hawaii\\', \\'California\\', \\'Oregon\\', \\'Washington\\']}",
+                                "output_dataframe_name": "pacific_states"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "earthquakes",
+                                "reference_geodataframe_name": "pacific_states",
+                                "spatial_predicates": [
+                                    "within",
+                                    "touches"
+                                ],
+                                "output_geodataframe_name": "pacific_earthquakes"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "pacific_earthquakes",
+                                "value_column": "mag",
+                                "radius": 15,
+                                "map_style": "carto-positron"
+                            },
+                            "comment": null
+                        }
+                    ]
                 }
             ],
             "generated_solution": null,
@@ -4646,7 +4695,26 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": []
+                    "steps": [
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Current Wildland Fire Incident Locations, size in acres",
+                                "output_geodataframe_name": "fires"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "fires",
+                                "value_column": "IncidentSi",
+                                "radius": 25,
+                                "map_style": "carto-positron"
+                            },
+                            "comment": null
+                        }
+                    ]
                 }
             ],
             "generated_solution": null,
@@ -12616,7 +12684,46 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": []
+                    "steps": [
+                        {
+                            "function_name": "get_raster_path",
+                            "arguments": {
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Amtrak railway stations",
+                                "output_geodataframe_name": "stations"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_points_by_raster_values",
+                            "arguments": {
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
+                                "points_geodataframe_name": "stations",
+                                "value_column": "snow_depth",
+                                "filter_type": "greater",
+                                "threshold1": 39.37,
+                                "output_geodataframe_name": "snowy_stations"
+                            },
+                            "comment": "The value of 'threshold1'  can be 39.37 or higher"
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "snowy_stations",
+                                "value_column": "snow_depth",
+                                "radius": 15,
+                                "map_style": "carto-positron",
+                                "output_html_name": "snow_stations_heatmap"
+                            },
+                            "comment": null
+                        }
+                    ]
                 }
             ],
             "generated_solution": null,
@@ -12691,7 +12798,108 @@
             "reference_solution_description": null,
             "reference_solutions": [
                 {
-                    "steps": []
+                    "steps": [
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "GDP per capita (current US$)",
+                                "output_dataframe_name": "gdp_data"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Seaports of Latin America",
+                                "output_geodataframe_name": "ports"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "filters": "{\\'SUBREGION\\': [\\'South America\\', \\'Caribbean\\', \\'Central America\\']}",
+                                "output_dataframe_name": "la_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "gdp_data",
+                                "geodataframe_name": "la_countries",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "la_gdp"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "calculate_columns",
+                            "arguments": {
+                                "dataframe1_name": "la_gdp",
+                                "column1_name": "2023",
+                                "dataframe2_name": "la_gdp",
+                                "column2_name": "2018",
+                                "operation": "divide",
+                                "output_column_name": "gdp_growth",
+                                "output_dataframe_name": "la_gdp_growth"
+                            },
+                            "comment": "'column2_name'  can be any  customary time period 1, 3, 5, 10, 15 years"
+                        },
+                        {
+                            "function_name": "calculate_column_statistics",
+                            "arguments": {
+                                "dataframe_name": "la_gdp_growth",
+                                "column_name": "gdp_growth",
+                                "output_variable_name": "growth_stats",
+                                "include_quantiles": true,
+                                "additional_quantiles": "[0.9]"
+                            },
+                            "comment": " Any quantile over 0.5 can be used, 'additional quantile' usage is optional"
+                        },
+                        {
+                            "function_name": "filter_numerical",
+                            "arguments": {
+                                "dataframe_name": "la_gdp_growth",
+                                "conditions": "gdp_growth >= 1.34",
+                                "output_dataframe_name": "high_growth_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "select_features_by_spatial_relationship",
+                            "arguments": {
+                                "features_geodataframe_name": "ports",
+                                "reference_geodataframe_name": "high_growth_countries",
+                                "spatial_predicates": [
+                                    "within"
+                                ],
+                                "output_geodataframe_name": "selected_ports",
+                                "plot_result": false
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "make_heatmap",
+                            "arguments": {
+                                "geodataframe_name": "selected_ports",
+                                "value_column": "FACID_NUM",
+                                "radius": 20,
+                                "map_style": "carto-positron"
+                            },
+                            "comment": null
+                        }
+                    ]
                 }
             ],
             "generated_solution": null,
