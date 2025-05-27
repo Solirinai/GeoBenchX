@@ -49,8 +49,9 @@ from geobenchx.utils import get_solution_code, compute_confusion_stats
 from geobenchx.dataclasses import Task, Solution, Step, TaskSet, select_tasks_with_labels
 from geobenchx.constants import (
     MODEL_CLAUDE,
+    MODEL_CLAUDE_ADV4,
+    MODEL_GPT_41,
     MODEL_GEMINI,
-    MODEL_GPT,
     MODEL_GEMINI_ADV,
     RESULTS_FOLDER,
     ScoreValues
@@ -289,14 +290,12 @@ def score_task_solution(task: Task, model: str = MODEL_CLAUDE, temperature: floa
 
     Uses ... to compare solutions and extract evaluation metrics from structured response tags.
     """
-    if model == MODEL_CLAUDE:
-        llm = ChatAnthropic(model=MODEL_CLAUDE, temperature=temperature)
-    elif model == MODEL_GPT:
-        llm = ChatOpenAI(model=MODEL_GPT, temperature=temperature)
-    elif model == MODEL_GEMINI:
-        llm = ChatGoogleGenerativeAI(model=MODEL_GEMINI, temperature=temperature)
-    elif model == MODEL_GEMINI_ADV:
-        llm = ChatGoogleGenerativeAI(model=MODEL_GEMINI_ADV, temperature=temperature)    
+    if model in [MODEL_CLAUDE, MODEL_CLAUDE_ADV4]:
+        llm = ChatAnthropic(model=model, temperature=temperature)
+    elif model in [MODEL_GPT_41]:
+        llm = ChatOpenAI(model=model, temperature=temperature)
+    elif model in [MODEL_GEMINI, MODEL_GEMINI_ADV]:
+        llm = ChatGoogleGenerativeAI(model=model, temperature=temperature)
     else:
         raise ValueError("Model is outside the predetermined list")
 

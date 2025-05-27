@@ -16,13 +16,16 @@ from geobenchx.dataclasses import Task, Solution, Step
 from geobenchx.prompts import RULES_PROMPT, SYSTEM_PROMPT
 from geobenchx.constants import (
     MODEL_GEMINI,
-    MODEL_GEMINI_ADV,
-    MODEL_GPT,
+    MODEL_GEMINI_ADV,    
+    MODEL_GPT_4o,
+    MODEL_GPT_41,
     MODEL_GPT_mini,
-    MODEL_O,
+    MODEL_O3,
+    MODEL_O4,
     MODEL_CLAUDE,
     MODEL_CLAUDE_mini,
-    MODEL_CLAUDE_ADV,
+    MODEL_CLAUDE_ADV3,
+    MODEL_CLAUDE_ADV4
     
 )
 from geobenchx.tools import (
@@ -88,7 +91,7 @@ tools = [
     calculate_column_statistics_tool
 ]
 
-def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT, max_steps: int = 25, capture_history=False):
+def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT_4o, max_steps: int = 25, capture_history=False):
 
     # Initialize conversation history if capturing
     conversation_history = [] if capture_history else None
@@ -98,16 +101,14 @@ def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT,
     input_tokens = []
     output_tokens = []
 
-    if model in [MODEL_CLAUDE, MODEL_CLAUDE_mini, MODEL_CLAUDE_ADV]:
+    if model in [MODEL_CLAUDE, MODEL_CLAUDE_mini, MODEL_CLAUDE_ADV3, MODEL_CLAUDE_ADV4]:
         llm = ChatAnthropic(model=model, temperature=temperature)
-    elif model in [MODEL_GPT, MODEL_GPT_mini]:
+    elif model in [MODEL_GPT_4o, MODEL_GPT_41, MODEL_GPT_mini]:
         llm = ChatOpenAI(model=model, temperature=temperature)
-    elif model == MODEL_O:
+    elif model in [MODEL_O3, MODEL_O4]:
         llm = ChatOpenAI(model=model, temperature=None)
-    elif model == MODEL_GEMINI:
+    elif model in [MODEL_GEMINI, MODEL_GEMINI_ADV]:
         llm = ChatGoogleGenerativeAI(model=model, temperature=temperature)
-    elif model == MODEL_GEMINI_ADV:
-        llm = ChatGoogleGenerativeAI(model=model, temperature=temperature)    
     else:
         raise ValueError("Model is outside the predetermined list")
 
