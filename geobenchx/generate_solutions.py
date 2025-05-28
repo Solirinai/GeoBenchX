@@ -35,7 +35,8 @@ def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_fi
     """
 
     if capture_history:
-        run_folder = Path(RESULTS_FOLDER) / Path(datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) if capture_history else None
+        safe_model_name = model.replace("/", "-").replace("\\", "-").replace(":", "-")
+        run_folder = Path(RESULTS_FOLDER) / Path(f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}_{safe_model_name}_temp{temperature}") if capture_history else None
         run_folder.mkdir(parents=True, exist_ok=True)
         
     tasks.metadata['model'] = model

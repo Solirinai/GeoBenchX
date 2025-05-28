@@ -126,6 +126,7 @@ class State(TypedDict):
     """Type definition for the graph state"""
     data_store: Dict[str, Any]  # Store for both DataFrames and GeoDataFrames
     image_store: List[Dict[str, Any]] # Store for images to save to the coversation history
+    html_store: List[Dict[str, Any]] # Store for html strings to save to the coversation history 
     messages: Annotated[list, add_messages]
     remaining_steps: RemainingSteps
     visualize: bool
@@ -1505,7 +1506,6 @@ def make_heatmap(
     geodataframe_name: Annotated[str, "Name of GeoDataFrame containing point data"],
     value_column: Annotated[str, "Column name for intensity values"],
     state: Annotated[dict, InjectedState],
-    output_html_name: Annotated[str | None, "Optional name for storing the HTML output"] = None,
     center_lat: Annotated[float, "Center latitude for the map view"] = None,
     center_lon: Annotated[float, "Center longitude for the map view"] = None,
     zoom_level: Annotated[int, "Initial zoom level (1-20)"] = None,
@@ -1524,7 +1524,6 @@ def make_heatmap(
         geodataframe_name: Name of the GeoDataFrame with point geometries
         value_column: Column containing values for heatmap intensity
         state: Current graph state containing geodataframes and results
-        output_html_name: Optional name for storing the HTML visualization (if None, HTML won't be saved)
         center_lat: Center latitude for the map view (auto-calculated if None)
         center_lon: Center longitude for the map view (auto-calculated if None)
         zoom_level: Initial zoom level (auto-calculated if None)
@@ -1537,9 +1536,9 @@ def make_heatmap(
         str: Status message with visualization details
     """
     try:
-        # Initialize image store if needed
-        if "image_store" not in state:
-            state["image_store"] = []
+        # Initialize html store if needed
+        if "html_store" not in state:
+            state["html_store"] = []
                
         # Get GeoDataFrame from state
         gdf = state["data_store"].get(geodataframe_name)
@@ -1573,30 +1572,17 @@ def make_heatmap(
             else:
                 zoom_level = int(max(0, min(10, 8 - np.log2(max_range))))
 
-        # Create the density map
-        if value_column is None:
-            # Create density map based on point locations only
-            fig = px.density_mapbox(
-                gdf,
-                lat=lats,
-                lon=lons,
-                radius=radius,
-                center=dict(lat=center_lat, lon=center_lon),
-                zoom=zoom_level,
-                mapbox_style=map_style
-            )
-        else:
-            # Create density map weighted by value column
-            fig = px.density_mapbox(
-                gdf,
-                lat=lats,
-                lon=lons,
-                z=value_column,
-                radius=radius,
-                center=dict(lat=center_lat, lon=center_lon),
-                zoom=zoom_level,
-                mapbox_style=map_style
-            )
+        # Create density map weighted by value column
+        fig = px.density_mapbox(
+            gdf,
+            lat=lats,
+            lon=lons,
+            z=value_column,
+            radius=radius,
+            center=dict(lat=center_lat, lon=center_lon),
+            zoom=zoom_level,
+            mapbox_style=map_style
+        )
 
         # Update layout
         fig.update_layout(
@@ -1605,21 +1591,13 @@ def make_heatmap(
             margin=dict(l=0, r=0, t=0, b=0)
         )
 
-        # Capture the figure as base64 before showing it
-        buf = io.BytesIO()
-        img_bytes = fig.to_image(format="png", width=width, height=height, scale=2)
-        img_base64 = base64.b64encode(img_bytes).decode('utf-8')
-        buf.seek(0)
-        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
-        buf.close()
-
-        # Store the image in the state with metadata
-        state["image_store"].append({
-            "type": "map",
-            "description": f"Created interactive heatmap visualization from '{geodataframe_name}'.",
-            "base64": img_base64
-        })           
-
+        html_string = fig.to_html(include_plotlyjs='cdn', div_id=f"heatmap_{geodataframe_name}")       
+      
+        state["html_store"].append({
+            "type": "interactive_map",
+            "description": f"Interactive heatmap from '{geodataframe_name}' showing {value_column}",
+            "html": html_string
+        })      
 
         # Prepare result message
         result_parts = [
@@ -1629,11 +1607,6 @@ def make_heatmap(
             f"- Zoom level: {zoom_level}",
             f"- Base map style: {map_style}"
         ]
-
-        # Optionally save HTML
-        if output_html_name is not None:
-            fig.to_html()
-            result_parts.append(f"HTML output stored as '{output_html_name}' in data store")
 
         # Show the plot
         if "visualize" in state and state['visualize']:

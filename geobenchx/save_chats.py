@@ -67,6 +67,8 @@ def save_conversation_to_html(task, conversation_history, run_folder):
         .tool-call {{ background-color: #fff3e0; padding: 15px; overflow-x: auto; }}
         .tool-result {{ background-color: #e8f5e9; padding: 15px; overflow-x: auto; }}
         .image {{background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px;}}
+        .interactive-map {{ background-color: #f0f8ff; padding: 15px; }}
+        .map-container {{ margin-top: 10px; }}
         img {{ max-width: 100%; }}
         pre {{ white-space: pre-wrap; }}
         h1, h2 {{ color: #333; }}
@@ -119,7 +121,42 @@ def save_conversation_to_html(task, conversation_history, run_folder):
         <img src="data:image/png;base64,{entry['content']}" alt="{description}">
 </div>
 """      
-    
+        elif entry['type'] == 'interactive_map':
+            description = entry.get('description', 'Interactive Map')
+            
+            # Safe handling of different content structures
+            try:
+                if isinstance(entry['content'], dict):
+                    # Content is a dictionary - try to get HTML
+                    if 'html' in entry['content']:
+                        map_html = entry['content']['html']
+                    else:
+                        # Dictionary but no 'html' key - convert to string
+                        map_html = f"<pre>{safe_escape(str(entry['content']))}</pre>"
+                elif isinstance(entry['content'], str):
+                    # Content is already a string - check if it's HTML
+                    if '<' in entry['content'] and '>' in entry['content']:
+                        # Looks like HTML
+                        map_html = entry['content']
+                    else:
+                        # Plain text - escape it
+                        map_html = f"<pre>{safe_escape(entry['content'])}</pre>"
+                else:
+                    # Unknown content type - convert to string
+                    map_html = f"<pre>{safe_escape(str(entry['content']))}</pre>"
+                    
+            except (KeyError, TypeError) as e:
+                # Fallback if anything goes wrong
+                map_html = f"<pre>Error displaying interactive map: {str(e)}</pre>"
+            
+            html_content += f"""<div class="message interactive-map">
+                <strong>{description}:</strong><br>
+                <div class="map-container">
+                    {map_html}
+                </div>
+        </div>
+        """
+
     # Add the final solution
     if task.generated_solution:
         solution_code = get_solution_code(task.generated_solution)
@@ -141,7 +178,7 @@ def save_conversation_to_html(task, conversation_history, run_folder):
     
     # Write the HTML to a file
     task_file = run_folder / f"task_{task.task_ID}.html"
-    with open(task_file, "w", encoding="utf-8") as f:
-        f.write(html_content)
+    # with open(task_file, "w", encoding="utf-8") as f:
+    #     f.write(html_content)
     
     return f"Saved conversation to {task_file}"

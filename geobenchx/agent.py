@@ -118,6 +118,7 @@ def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT_
         "messages": [("user", task_text)],
         "data_store": {},
         "image_store": [],
+        "html_store":[],
         "visualize": True
         }
 
@@ -158,6 +159,16 @@ def execute_task(task_text: str, temperature: float = 0, model: str = MODEL_GPT_
                         'description': img_data.get("description", "Visualization")
                     })
                 s["image_store"].clear() 
+
+            # Extract any html from state and add to conversation history
+            if capture_history and "html_store" in s and s["html_store"]:
+                for html_item in s["html_store"]:
+                    conversation_history.append({
+                        'type': 'interactive_map',
+                        'content': html_item["html"],
+                        'description': html_item.get("description", "Interactive Map")
+                    })
+                s["html_store"].clear()                 
 
     except GraphRecursionError as e:
         print(f"Maximum recursion depth reached: {e}")                    
