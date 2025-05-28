@@ -1,6 +1,7 @@
 import os
 import re
 import html
+import gc
 import json
 from pathlib import Path
 from geobenchx.utils import get_solution_code
@@ -55,130 +56,156 @@ def save_conversation_to_html(task, conversation_history, run_folder):
     Returns:
         str: Message indicating where the file was saved
     """
-    html_content = f"""<!DOCTYPE html>
-<html>
-<head>
-    <title>Task {task.task_ID} Conversation</title>
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 20px; }}
-        .message {{ margin-bottom: 20px; padding: 10px; border-radius: 5px; }}
-        .user {{ background-color: #f0f0f0; padding: 15px;}}
-        .assistant {{ background-color: #e6f7ff; padding: 15px;}}
-        .tool-call {{ background-color: #fff3e0; padding: 15px; overflow-x: auto; }}
-        .tool-result {{ background-color: #e8f5e9; padding: 15px; overflow-x: auto; }}
-        .image {{background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px;}}
-        .interactive-map {{ background-color: #f0f8ff; padding: 15px; }}
-        .map-container {{ margin-top: 10px; }}
-        img {{ max-width: 100%; }}
-        pre {{ white-space: pre-wrap; }}
-        h1, h2 {{ color: #333; }}
-        .solution {{ background-color: #e8f5e9; padding: 15px; border-radius: 5px; margin-top: 20px; }}
-        .solution pre {{ background-color: #f5f5f5; padding: 10px; border-radius: 3px; }}
-        ul.message {{margin-bottom: 20px; padding: 15px; border-radius: 5px;}}
-    </style>
-</head>
-<body>
-    <h1>Task ID: {task.task_ID}</h1>
-    <div class="message">
-    <strong>Task Description:</strong>
-        <pre>{html.escape(task.task_text)}</pre>
-    </div>
-    
-    <h2>Conversation:</h2>
-"""
-    # Add each message in the conversation history
-    for entry in conversation_history:
-        if entry['type'] == 'human':
-            html_content += f"""<div class="message user">
-    <strong>User Message:</strong>
-    <pre>{format_content_for_display(entry['content'])}</pre>
-</div>
-"""
-        elif entry['type'] == 'ai':
-            html_content += f"""<div class="message assistant">
-    <strong>AI Message:</strong>
-    <pre>{format_content_for_display(entry['content'])}</pre>
-</div>
-"""
-        elif entry['type'] == 'tool':
-            html_content += f"""<div class="message tool-call">
-    <strong>Tool Response:</strong>
-    <pre>{format_content_for_display(entry['content'])}</pre>
-</div>
-"""
-        elif entry['type'] == 'tool_use':
-            html_content += f"""<div class="message tool-result">
-    <strong>Tool Call:</strong>
-    <pre>{format_content_for_display(entry['content'])}</pre>
-</div>
-"""
-        elif entry['type'] == 'image':
-            # Get description if available
-            description = entry.get('description', 'Generated Image')          
-            # Display base64 encoded image with metadata
-            html_content += f"""<div class="message image">
-        <strong>{description}:</strong><br>
-        <img src="data:image/png;base64,{entry['content']}" alt="{description}">
-</div>
-"""      
-        elif entry['type'] == 'interactive_map':
-            description = entry.get('description', 'Interactive Map')
-            
-            # Safe handling of different content structures
-            try:
-                if isinstance(entry['content'], dict):
-                    # Content is a dictionary - try to get HTML
-                    if 'html' in entry['content']:
-                        map_html = entry['content']['html']
-                    else:
-                        # Dictionary but no 'html' key - convert to string
-                        map_html = f"<pre>{safe_escape(str(entry['content']))}</pre>"
-                elif isinstance(entry['content'], str):
-                    # Content is already a string - check if it's HTML
-                    if '<' in entry['content'] and '>' in entry['content']:
-                        # Looks like HTML
-                        map_html = entry['content']
-                    else:
-                        # Plain text - escape it
-                        map_html = f"<pre>{safe_escape(entry['content'])}</pre>"
-                else:
-                    # Unknown content type - convert to string
-                    map_html = f"<pre>{safe_escape(str(entry['content']))}</pre>"
-                    
-            except (KeyError, TypeError) as e:
-                # Fallback if anything goes wrong
-                map_html = f"<pre>Error displaying interactive map: {str(e)}</pre>"
-            
-            html_content += f"""<div class="message interactive-map">
-                <strong>{description}:</strong><br>
-                <div class="map-container">
-                    {map_html}
-                </div>
+    try:
+        html_parts = []
+
+        html_parts.append(f"""<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Task {task.task_ID} Conversation</title>
+        <style>
+            body {{ font-family: Arial, sans-serif; margin: 20px; }}
+            .message {{ margin-bottom: 20px; padding: 10px; border-radius: 5px; }}
+            .user {{ background-color: #f0f0f0; padding: 15px;}}
+            .assistant {{ background-color: #e6f7ff; padding: 15px;}}
+            .tool-call {{ background-color: #fff3e0; padding: 15px; overflow-x: auto; }}
+            .tool-result {{ background-color: #e8f5e9; padding: 15px; overflow-x: auto; }}
+            .image {{background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin-bottom: 20px;}}
+            .interactive-map {{ background-color: #f0f8ff; padding: 15px; }}
+            .map-container {{ margin-top: 10px; }}
+            img {{ max-width: 100%; }}
+            pre {{ white-space: pre-wrap; }}
+            h1, h2 {{ color: #333; }}
+            .solution {{ background-color: #e8f5e9; padding: 15px; border-radius: 5px; margin-top: 20px; }}
+            .solution pre {{ background-color: #f5f5f5; padding: 10px; border-radius: 3px; }}
+            ul.message {{margin-bottom: 20px; padding: 15px; border-radius: 5px;}}
+        </style>
+    </head>
+    <body>
+        <h1>Task ID: {task.task_ID}</h1>
+        <div class="message">
+        <strong>Task Description:</strong>
+            <pre>{html.escape(task.task_text)}</pre>
         </div>
-        """
+        
+        <h2>Conversation:</h2>
+    """)
+        # Add each message in the conversation history
+        for entry in conversation_history:
+            if entry['type'] == 'human':
+                content = format_content_for_display(entry['content'])
+                html_parts.append(f"""<div class="message user">
+        <strong>User Message:</strong>
+        <pre>{content}</pre>
+    </div>
+    """)
+                del content
+            elif entry['type'] == 'ai':
+                content = format_content_for_display(entry['content'])
+                html_parts.append(f"""<div class="message assistant">
+        <strong>AI Message:</strong>
+        <pre>{content}</pre>
+    </div>
+    """)
+                del content
+            elif entry['type'] == 'tool':
+                content = format_content_for_display(entry['content'])
+                html_parts.append(f"""<div class="message tool-call">
+        <strong>Tool Response:</strong>
+        <pre>{content}</pre>
+    </div>
+    """)
+                del content
+            elif entry['type'] == 'tool_use':
+                content = format_content_for_display(entry['content'])
+                html_parts.append(f"""<div class="message tool-result">
+        <strong>Tool Call:</strong>
+        <pre>{content}</pre>
+    </div>
+    """)
+                del content
+            elif entry['type'] == 'image':
+                # Get description if available
+                description = entry.get('description', 'Generated Image')          
+                # Display base64 encoded image with metadata
+                content = entry['content']
+                html_parts.append(f"""<div class="message image">
+            <strong>{safe_escape(description)}:</strong><br>
+            <img src="data:image/png;base64,{content}" alt="{safe_escape(description)}">
+    </div>
+    """)
+                del description, content      
+            elif entry['type'] == 'interactive_map':
+                description = entry.get('description', 'Interactive Map')
+                
+                # Safe handling of different content structures
+                try:
+                    if isinstance(entry['content'], dict):
+                        # Content is a dictionary - try to get HTML
+                        if 'html' in entry['content']:
+                            map_html = entry['content']['html']
+                        else:
+                            # Dictionary but no 'html' key - convert to string
+                            map_html = f"<pre>{safe_escape(str(entry['content']))}</pre>"
+                    elif isinstance(entry['content'], str):
+                        # Content is already a string - check if it's HTML
+                        if '<' in entry['content'] and '>' in entry['content']:
+                            # Looks like HTML
+                            map_html = entry['content']
+                        else:
+                            # Plain text - escape it
+                            map_html = f"<pre>{safe_escape(entry['content'])}</pre>"
+                    else:
+                        # Unknown content type - convert to string
+                        map_html = f"<pre>{safe_escape(str(entry['content']))}</pre>"
+                        
+                except (KeyError, TypeError) as e:
+                    # Fallback if anything goes wrong
+                    map_html = f"<pre>Error displaying interactive map: {str(e)}</pre>"
+                
+                html_parts.append(f"""<div class="message interactive-map">
+                    <strong>{safe_escape(description)}:</strong><br>
+                    <div class="map-container">
+                        {map_html}
+                    </div>
+            </div>
+            """)
+                del description, map_html            
 
-    # Add the final solution
-    if task.generated_solution:
-        solution_code = get_solution_code(task.generated_solution)
-        html_content += f"""<h2>Final Solution:</h2>
-<div class="solution">
-    <pre>{safe_escape(solution_code)}</pre>
-</div>
+        # Add the final solution
+        if task.generated_solution:
+            solution_code = get_solution_code(task.generated_solution)
+            html_parts.append(f"""<h2>Final Solution:</h2>
+    <div class="solution">
+        <pre>{safe_escape(solution_code)}</pre>
+    </div>
 
-<h3>Token Usage:</h3>
-<ul class="message">
-    <li>Input tokens: {task.generated_solution_input_tokens}</li>
-    <li>Output tokens: {task.generated_solution_output_tokens}</li>
-</ul>
-"""
+    <h3>Token Usage:</h3>
+    <ul class="message">
+        <li>Input tokens: {task.generated_solution_input_tokens}</li>
+        <li>Output tokens: {task.generated_solution_output_tokens}</li>
+    </ul>
+    """)
+            del solution_code
+        
+        html_parts.append("""</body>
+    </html>
+    """)
+        
+        # Write the HTML to a file
+        task_file = run_folder / f"task_{task.task_ID}.html"
+        with open(task_file, "w", encoding="utf-8") as f:
+            f.write(''.join(html_parts))
+
+        # Final cleanup
+        del html_parts
+        gc.collect()    
+        
+        return f"Saved conversation to {task_file}"
     
-    html_content += """</body>
-</html>
-"""
-    
-    # Write the HTML to a file
-    task_file = run_folder / f"task_{task.task_ID}.html"
-    # with open(task_file, "w", encoding="utf-8") as f:
-    #     f.write(html_content)
-    
-    return f"Saved conversation to {task_file}"
+    except Exception as e:
+    # Emergency cleanup
+        if 'html_parts' in locals():
+            del html_parts
+        gc.collect()
+        raise e

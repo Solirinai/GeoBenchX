@@ -69,6 +69,7 @@ def generate_solutions(tasks: TaskSet, model: str, temperature: float, output_fi
                 success = True
 
                 save_conversation_to_html(task, conversation_history, run_folder)
+                del conversation_history
 
             except Exception as e:
                 try_count += 1

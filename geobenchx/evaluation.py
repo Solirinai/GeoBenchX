@@ -472,6 +472,8 @@ def score_solutions_set(tasks_filename: str, folder: str = RESULTS_FOLDER, model
         except Exception as e:
             print(repr(e))
     print(f"Total input tokens: {total_input}, total output tokens: {total_output}")  
+    tasks.metadata['total_input_tokens_for_evaluation'] = total_input
+    tasks.metadata['total_output_tokens_for_evaluation'] = total_output    
 
 def get_eval_stats_by_subsets(tasks_file_name: str, folder: str = RESULTS_FOLDER, labels: List[str] = None, functions_names: List[str] = None, alpha: float = 0.05):
     """

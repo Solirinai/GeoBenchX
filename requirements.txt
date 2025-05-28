@@ -36,3 +36,5 @@ streamlit
 statsmodels
 scikit-learn
 kaleido
+html
+gc
