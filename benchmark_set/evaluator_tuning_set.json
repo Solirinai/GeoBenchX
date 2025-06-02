@@ -3378,7 +3378,8 @@
                                         "Western Africa",
                                         "Middle Africa",
                                         "Southern Africa",
-                                        "Western Africa", "Eastern Africa"
+                                        "Western Africa",
+                                        "Eastern Africa"
                                     ]
                                 },
                                 "output_dataframe_name": "africa_data"
@@ -4807,12 +4808,13 @@
                                         "Western Africa",
                                         "Middle Africa",
                                         "Southern Africa",
-                                        "Western Africa", "Eastern Africa"
+                                        "Western Africa",
+                                        "Eastern Africa"
                                     ]
                                 },
                                 "output_dataframe_name": "africa_data"
                             },
-                            "comment": null
+                            "comment": "Also acceptable filter is 'filters': '{\"REGION_WB\": [\"Sub-Saharan Africa\"]}'"
                         },
                         {
                             "function_name": "merge_dataframes",
@@ -5165,6 +5167,72 @@
                                 "dataframe_name": "countries",
                                 "filters": {
                                     "SUBREGION": "Northern Europe"
+                                },
+                                "output_dataframe_name": "nordic_countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "merge_dataframes",
+                            "arguments": {
+                                "dataframe_name": "agri_gdp",
+                                "geodataframe_name": "nordic_countries",
+                                "statkey": "Country Name",
+                                "geokey": "NAME_EN",
+                                "output_dataframe_name": "nordic_agri"
+                            },
+                            "comment": "If 'statkey' is 'Country Name', then 'geokey' should be 'NAME_EN'. If 'statkey' is 'Country Code', then 'geokey' can be either 'WB_A3' or 'ISO_A3'."
+                        },
+                        {
+                            "function_name": "make_choropleth_map",
+                            "arguments": {
+                                "dataframe_name": "nordic_agri",
+                                "mappingkey": "2023",
+                                "legendtext": "Agriculture, value added (% of GDP)",
+                                "colormap": "Agriculture"
+                            },
+                            "comment": null
+                        }
+                    ]
+                },
+                {
+                    "steps": [
+                        {
+                            "function_name": "load_data",
+                            "arguments": {
+                                "dataset": "Agriculture, value added (% of GDP)",
+                                "output_dataframe_name": "agri_gdp"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "load_geodata",
+                            "arguments": {
+                                "geodataset": "Countries",
+                                "output_geodataframe_name": "countries"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "get_unique_values",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "column": "NAME_EN"
+                            },
+                            "comment": null
+                        },
+                        {
+                            "function_name": "filter_categorical",
+                            "arguments": {
+                                "dataframe_name": "countries",
+                                "filters": {
+                                    "NAME_EN": [
+                                        "Denmark",
+                                        "Finland",
+                                        "Iceland",
+                                        "Norway",
+                                        "Sweden"
+                                    ]
                                 },
                                 "output_dataframe_name": "nordic_countries"
                             },
