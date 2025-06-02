@@ -4797,7 +4797,7 @@
                                 "dataframe_name": "countries",
                                 "column": "SUBREGION"
                             },
-                            "comment": null
+                            "comment": "Also acceptable column is 'REGION_WB'"
                         },
                         {
                             "function_name": "filter_categorical",
