@@ -350,14 +350,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "filter_points_by_raster_values",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "points_geodataframe_name": "amtrak_stations",
                                 "value_column": "snow_depth",
                                 "output_geodataframe_name": "snow_stations",
@@ -420,14 +420,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "filter_points_by_raster_values",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "points_geodataframe_name": "amtrak_stations",
                                 "value_column": "snow_depth",
                                 "output_geodataframe_name": "snow_stations",
@@ -493,7 +493,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/bgd_ppp_2018_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/bgd_ppp_2018_UNadj.tif",
                                 "geodataframe_name": "railway_buffer",
                                 "output_variable_name": "population_in_buffer"
                             },
@@ -524,14 +524,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "output_filename": "snow_contours.shp",
                                 "contour_interval": 36,
                                 "column_title": "snow_depth",
@@ -621,14 +621,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "output_filename": "snow_contours.shp",
                                 "contour_interval": 36,
                                 "column_title": "snow_depth",
@@ -735,8 +735,8 @@
                         {
                             "function_name": "analyze_raster_overlap",
                             "arguments": {
-                                "raster1_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/DFO_4569_From_20180201_to_20180221.tif",
-                                "raster2_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "raster1_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/DFO_4569_From_20180201_to_20180221.tif",
+                                "raster2_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
                                 "output_variable_name": "flood_population_analysis",
                                 "resampling_method1": "max",
                                 "resampling_method2": "sum"
@@ -785,14 +785,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "filter_points_by_raster_values",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "points_geodataframe_name": "us_towns_filtered",
                                 "value_column": "snow_depth",
                                 "output_geodataframe_name": "towns_with_snow",
@@ -842,14 +842,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "filter_points_by_raster_values",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "points_geodataframe_name": "us_towns_filtered",
                                 "value_column": "snow_depth",
                                 "output_geodataframe_name": "towns_with_snow",
@@ -1306,7 +1306,7 @@
                         {
                             "function_name": "filter_points_by_raster_values",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/dza_pd_2020_1km_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/dza_pd_2020_1km_UNadj.tif",
                                 "points_geodataframe_name": "algeria_mines",
                                 "value_column": "population_density",
                                 "output_geodataframe_name": "high_density_mines",
@@ -1540,8 +1540,8 @@
             "generated_solution_output_tokens": null,
             "match_reasoning_LLM": null,
             "match_score_LLM": null,
-            "match_reasoning_Human": "",
-            "match_score_Human": 0
+            "match_reasoning_Human": null,
+            "match_score_Human": null
         },
         {
             "task_ID": "TASK_250309_135125_130168",
@@ -1817,14 +1817,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "output_filename": "snow_contours",
                                 "contour_interval": 24,
                                 "min_value": 24,
@@ -2816,7 +2816,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/bgd_ppp_2018_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/bgd_ppp_2018_UNadj.tif",
                                 "geodataframe_name": "railway_buffer",
                                 "output_variable_name": "railway_zone_stats"
                             },
@@ -2825,7 +2825,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/bgd_ppp_2018_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/bgd_ppp_2018_UNadj.tif",
                                 "output_variable_name": "bd_pop_stats"
                             },
                             "comment": null
@@ -3053,7 +3053,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/ago_ppp_2020_UNadj.tif"
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/ago_ppp_2020_UNadj.tif"
                             },
                             "comment": null
                         },
@@ -3079,7 +3079,7 @@
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/ago_ppp_2020_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/ago_ppp_2020_UNadj.tif",
                                 "output_filename": "angola_population_contours.shp",
                                 "contour_interval": 50,
                                 "column_title": "population_density",
@@ -3195,7 +3195,7 @@
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/bra_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/bra_ppp_2018_1km_Aggregated_UNadj.tif",
                                 "output_filename": "brazil_pop_contours.shp",
                                 "contour_interval": 500,
                                 "column_title": "population_density",
@@ -3502,7 +3502,7 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
@@ -3517,7 +3517,7 @@
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "output_filename": "snow_contours",
                                 "contour_interval": 5,
                                 "column_title": "snow_depth",
@@ -3836,7 +3836,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/chl_ppp_2020_UNadj.tif"
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/chl_ppp_2020_UNadj.tif"
                             },
                             "comment": null
                         },
@@ -3882,7 +3882,7 @@
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/chl_ppp_2020_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/chl_ppp_2020_UNadj.tif",
                                 "output_filename": "chile_pop_contours",
                                 "contour_interval": 25,
                                 "column_title": "pop_density",
@@ -4035,14 +4035,14 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2023093012_to_2024093012.tif"
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2023093012_to_2024093012_processed.tif"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2023093012_to_2024093012.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2023093012_to_2024093012_processed.tif",
                                 "output_filename": "snow_contours",
                                 "contour_interval": 5,
                                 "column_title": "snow_depth",
@@ -4136,14 +4136,14 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif"
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif"
                             },
                             "comment": null
                         },
@@ -4190,7 +4190,7 @@
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "output_filename": "snow_contours",
                                 "contour_interval": 5,
                                 "column_title": "snow_depth",
@@ -4384,21 +4384,21 @@
                         {
                             "function_name": "get_raster_path",
                             "arguments": {
-                                "rasterdataset": "Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches"
+                                "rasterdataset": "Accumulated snow cover season 2024-2025, USA, inches"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif"
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif"
                             },
                             "comment": null
                         },
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2024093012_to_2025020312.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2024093012_to_2025052012_processed.tif",
                                 "output_filename": "snow_contours",
                                 "contour_interval": 5,
                                 "column_title": "snow_depth",
@@ -4621,7 +4621,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/usa_ppp_2020_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/usa_ppp_2020_1km_Aggregated_UNadj.tif",
                                 "geodataframe_name": "earthquakes",
                                 "output_variable_name": "earthquake_population"
                             },
@@ -8690,7 +8690,7 @@
                                         "Guyana",
                                         "Peru",
                                         "Suriname",
-                                        "Venezuela"
+                                        "Venezuela, RB"
                                     ]
                                 },
                                 "output_dataframe_name": "amazon_countries"
@@ -9630,7 +9630,7 @@
                                         "Western Africa",
                                         "Middle Africa",
                                         "Southern Africa",
-                                        "Western Africa"
+                                        "Western Africa", "Eastern Africa"
                                     ]
                                 },
                                 "output_dataframe_name": "africa_data"
@@ -9740,7 +9740,7 @@
                                         "Western Africa",
                                         "Middle Africa",
                                         "Southern Africa",
-                                        "Western Africa"
+                                        "Western Africa", "Eastern Africa"
                                     ]
                                 },
                                 "output_dataframe_name": "africa_data"
@@ -10273,7 +10273,7 @@
                                         "Guyana",
                                         "Peru",
                                         "Suriname",
-                                        "Venezuela"
+                                        "Venezuela, RB"
                                     ]
                                 },
                                 "output_dataframe_name": "amazon_countries"
@@ -11058,7 +11058,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
                                 "geodataframe_name": "seaports_buffer",
                                 "output_variable_name": "population_in_buffer"
                             },
@@ -11067,7 +11067,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
                                 "output_variable_name": "total_population"
                             },
                             "comment": null
@@ -11121,7 +11121,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/bgd_pd_2018_1km_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/bgd_pd_2018_1km_UNadj.tif",
                                 "geodataframe_name": "railway_buffer",
                                 "output_variable_name": "population_analysis"
                             },
@@ -11130,7 +11130,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
                                 "output_variable_name": "total_population"
                             },
                             "comment": null
@@ -11502,7 +11502,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/usa_ppp_2020_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/usa_ppp_2020_1km_Aggregated_UNadj.tif",
                                 "geodataframe_name": "fire_buffers",
                                 "output_variable_name": "population_in_fire_zones"
                             },
@@ -11568,7 +11568,7 @@
                         {
                             "function_name": "get_values_from_raster_with_geometries",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/ago_ppp_2020_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/ago_ppp_2020_1km_Aggregated_UNadj.tif",
                                 "geodataframe_name": "angola_mines_buffer",
                                 "output_variable_name": "population_in_buffer"
                             },
@@ -11577,7 +11577,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/ago_ppp_2020_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/ago_ppp_2020_1km_Aggregated_UNadj.tif",
                                 "output_variable_name": "angola_population"
                             },
                             "comment": null
@@ -12285,7 +12285,7 @@
                         {
                             "function_name": "generate_contours_display",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/GeoData/sfav2_CONUS_2023093012_to_2024093012.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/sfav2_CONUS_2023093012_to_2024093012_processed.tif",
                                 "output_filename": "snow_contours_2023_2024",
                                 "contour_interval": 20,
                                 "column_title": "snow_depth",

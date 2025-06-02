@@ -89,8 +89,8 @@ EXAMPLE_0 = """
 <TASK>What is the total length of railways within areas that received more than 3 feet of snow this season in the USA?</TASK>
 <REFERENCE SOLUTIONS>
 <REFERENCE SOLUTION>
-get_raster_path(rasterdataset='Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches') 
-generate_contours_display(raster_path='data/sfav2_CONUS_2024093012_to_2025020312.tif', output_filename='snow_contours.shp', contour_interval='36', column_title='snow_depth', nodataval='-99999', output_geodataframe_name='snow_contours', min_value='36') 
+get_raster_path(rasterdataset='Accumulated snow cover season 2024-2025, USA, inches') 
+generate_contours_display(raster_path='data/sfav2_CONUS_2024093012_to_2025052012_processed.tif', output_filename='snow_contours.shp', contour_interval='36', column_title='snow_depth', nodataval='-99999', output_geodataframe_name='snow_contours', min_value='36') 
 load_geodata(geodataset='USA counties borders', output_geodataframe_name='us_counties') 
 select_features_by_spatial_relationship(features_geodataframe_name='us_counties', reference_geodataframe_name='snow_contours', spatial_predicates='['intersects']', output_geodataframe_name='snowy_counties') 
 load_geodata(geodataset='Railway Network of North America', output_geodataframe_name='railways') 
@@ -98,8 +98,8 @@ select_features_by_spatial_relationship(features_geodataframe_name='railways', r
 visualize_geographies(geodataframe_names='['snowy_counties', 'snowy_railways']', layer_styles='[{'color': 'blue', 'alpha': 0.3, 'label': 'Counties with >3ft snow'}, {'color': 'red', 'alpha': 0.6, 'label': 'Railways'}]', title='Railways in Areas with >3ft Snow Cover (2024-2025 Season)') 
 calculate_line_lengths(geodataframe_name='snowy_railways', output_variable_name='railway_lengths')</REFERENCE SOLUTION>
 <REFERENCE SOLUTION>
-get_raster_path(rasterdataset='Accumulated snow cover season 2024-2025 till February 3, 2025, USA, inches') 
-generate_contours_display(raster_path='data/sfav2_CONUS_2024093012_to_2025020312.tif', output_filename='snow_contours.shp', contour_interval='36', column_title='snow_depth', nodataval='-99999', output_geodataframe_name='snow_contours', min_value='36') 
+get_raster_path(rasterdataset='Accumulated snow cover season 2024-2025, USA, inches') 
+generate_contours_display(raster_path='data/sfav2_CONUS_2024093012_to_2025052012_processed.tif', output_filename='snow_contours.shp', contour_interval='36', column_title='snow_depth', nodataval='-99999', output_geodataframe_name='snow_contours', min_value='36') 
 load_geodata(geodataset='Railway Network of North America', output_geodataframe_name='railways') 
 select_features_by_spatial_relationship(features_geodataframe_name='railways', reference_geodataframe_name='snow_contours', spatial_predicates='['touches', 'intersects', 'crosses', 'overlaps']', output_geodataframe_name='snowy_railways') 
 calculate_line_lengths(geodataframe_name='snowy_railways', output_variable_name='railway_lengths')
@@ -108,7 +108,7 @@ calculate_line_lengths(geodataframe_name='snowy_railways', output_variable_name=
 <CANDIDATE SOLUTION>
 load_geodata(geodataset='Railway Network of North America', output_geodataframe_name='railways') 
 get_raster_path(rasterdataset='Accumulated snow cover season 2023-2024, USA, inches') 
-generate_contours_display(raster_path='data/sfav2_CONUS_2023093012_to_2024093012.tif', output_filename='snow_contours.shp', contour_interval='36', min_value='36', column_title='snow_depth', nodataval='-99', output_geodataframe_name='snow_contours', plot_result='False') 
+generate_contours_display(raster_path='data/sfav2_CONUS_2023093012_to_2024093012_processed.tif', output_filename='snow_contours.shp', contour_interval='36', min_value='36', column_title='snow_depth', nodataval='-99', output_geodataframe_name='snow_contours', plot_result='False') 
 select_features_by_spatial_relationship(features_geodataframe_name='railways', reference_geodataframe_name='snow_contours', spatial_predicates='['intersects']', output_geodataframe_name='snow_railways') 
 calculate_line_lengths(geodataframe_name='snow_railways', output_variable_name='railway_lengths') 
 visualize_geographies(geodataframe_names='['snow_contours', 'snow_railways']', layer_styles='[{'color': 'blue', 'alpha': 0.3, 'label': 'Snow > 3 feet'}, {'color': 'red', 'linewidth': 1, 'label': 'Affected Railways'}]', title='Railways in Areas with >3 Feet of Snow Accumulation (2023-2024 Season)')
@@ -536,5 +536,55 @@ def get_eval_stats_by_subsets(tasks_file_name: str, folder: str = RESULTS_FOLDER
             results.append(result_dict_2)
     else:
         print('No functions were provided for generating separate statistics')
+            
+    return results
+
+def get_eval_stats_by_pure_solvability(tasks_file_name: str, folder: str = RESULTS_FOLDER, alpha: float = 0.05):
+    """
+    Generate evaluation statistics separately for:
+    1. Tasks that have only 1 reference solution and this solution is "reject_task"
+    2. All other tasks (which may include tasks with multiple reference solutions, 
+        one of which could be "reject_task")
+
+    Args:
+        tasks_file_name: Name of the task file to analyze
+        folder: Directory containing the tasks file, defaults to RESULTS_FOLDER
+        alpha: Significance level for statistical tests, defaults to 0.05
+        
+    Returns:
+        List of dictionaries containing evaluation statistics for each subset
+    """
+
+    tasks_w_solutions = TaskSet.read_from_file(tasks_file_name, folder)
+
+    results = [] 
+
+    unsolvable_tasks = [task for task in tasks_w_solutions.tasks
+                            if len(task.reference_solutions)==1 and 
+                            any(step.function_name == 'reject_task' for step in task.reference_solutions[0].steps)
+                            ]
+    unsolvable_taskset = TaskSet(metadata=tasks_w_solutions.metadata, tasks=unsolvable_tasks)
+    res = generate_eval_stats(unsolvable_taskset, alpha)
+    result_dict = {
+        'subset_type': 'purely_unsolvable',
+        'description': 'Tasks with only 1 reference solution that is reject_task',
+        'task_count': len(unsolvable_tasks),
+        'evaluation_results': res
+    }
+    results.append(result_dict)
+
+    solvable_tasks = [task for task in tasks_w_solutions.tasks
+                            if len(task.reference_solutions)>1 or 
+                            not any(step.function_name == 'reject_task' for step in task.reference_solutions[0].steps)
+                            ]
+    solvable_taskset = TaskSet(metadata=tasks_w_solutions.metadata, tasks=solvable_tasks)
+    res_2 = generate_eval_stats(solvable_taskset, alpha)
+    result_dict_2 = {
+        'subset_type': 'solvable',
+        'description': 'All other tasks (may include multiple solutions, some with reject_task)',
+        'task_count': len(solvable_tasks),
+        'evaluation_results': res_2          
+    }
+    results.append(result_dict_2)
             
     return results
