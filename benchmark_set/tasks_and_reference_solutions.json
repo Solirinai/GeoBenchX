@@ -11196,7 +11196,7 @@
                         {
                             "function_name": "get_raster_description",
                             "arguments": {
-                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/per_ppp_2018_1km_Aggregated_UNadj.tif",
+                                "raster_path": "G:/My Drive/Geo Agent/Tasks data/Data/GeoData/bgd_pd_2018_1km_UNadj.tif",
                                 "output_variable_name": "total_population"
                             },
                             "comment": null
