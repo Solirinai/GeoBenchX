@@ -82,7 +82,6 @@ GEO_CATALOG = {
     "Mineral extraction facilities in Africa": "Africa mineral facilities.shp",
     "Power stations in Africa": "Africa Power Stations.shp",
     "Railways in Africa": "Africa railways.shp",
-    "States of Brazil": "bra_admbnda_adm1_ibge_2020.shp",
     "Municipalities of Brazil": "bra_admbnda_adm2_ibge_2020.shp",
     "Regions of Peru":"per_admbnda_adm1_ign_20200714.shp",
     "Provinces of Peru": "per_admbnda_adm2_ign_20200714.shp",
