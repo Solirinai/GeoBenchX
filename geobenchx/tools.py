@@ -2010,6 +2010,13 @@ def generate_contours_display(
         output_geodataframe_name: Name for storing the resulting GeoDataFrame in state
         min_value: Minimum value for contours (if None, uses raster minimum)
         max_value: Maximum value for contours (if None, uses raster maximum)
+        plot_result: Whether to display visualization
+        plot_title: Title for the plot
+        cleanup_files: Whether to remove temporary files after processing
+        colormap: Matplotlib colormap name
+        figsize: Figure size as JSON array [width, height] in inches, e.g. '[12, 8]'
+        add_colorbar: Whether to add a colorbar to the plot
+        plot_background: Whether to display raster as background
         
     Returns:
         str: Status message with operation results
