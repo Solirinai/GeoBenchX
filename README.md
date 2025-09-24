@@ -23,7 +23,7 @@ Each task gets up to 25 iterations of "LLM suggests tool → receives response" 
 
 In addition, we included a `reject_task()` tool that lets the agent explicitly declare when a task can't be solved with the available datasets and tools. This is crucial for real-world applications to reduce hallucinated outputs.
 
-For each task, we saved the complete conversation history between the LLM and tools as HTML files, including all plotted outputs, maps, and intermediate results ([example](/assets/Gemini_2.5_pro_TASK_250309_135125_275666.html)). This makes it easy to inspect the agent's reasoning process and debug issues.
+For each task, we saved the complete conversation history between the LLM and tools as HTML files, including all plotted outputs, maps, and intermediate results ([example](https://htmlpreview.github.io/?https://github.com/Solirinai/GeoBenchX/blob/main/assets/Gemini_2.5_pro_TASK_250309_135125_275666.html)). This makes it easy to inspect the agent's reasoning process and debug issues.
 
 ## What we tested
 
@@ -32,7 +32,7 @@ For each task, we saved the complete conversation history between the LLM and to
 - **Google**: Gemini 2.0 Flash, Gemini Pro 2.5 Preview  
 - **OpenAI**: GPT-4o, GPT-4.1, o4-mini
 
-Exact model's releases [here.](https://github.com/Solirinai/GeoBenchX/blob/main/geobenchx/constants.py)
+Exact models releases [here.](https://github.com/Solirinai/GeoBenchX/blob/main/geobenchx/constants.py)
 
 ## Benchmark Dataset
 
@@ -95,7 +95,7 @@ This benchmark fills a gap in evaluating LLMs on domain-specific tasks that requ
       1) Benchmark set of 202 geospatial tasks with reference solutions
       2) Set of tasks to tune evaluator agent - 50 tasks containing both reference and generated solutions where the generated solutions are scored manually. 
 - [Link for datasets for the agent to solve the benchmarkset](https://github.com/Solirinai/GeoBenchX/tree/main/data)      
-- [Modules for and prompts](https://github.com/Solirinai/GeoBenchX/tree/main/geobenchx) for the task solving agent, evaluator agent, tools.
+- [Modules and prompts](https://github.com/Solirinai/GeoBenchX/tree/main/geobenchx) for the task solving agent, evaluator agent, tools.
 - [Notebooks](https://github.com/Solirinai/GeoBenchX/tree/main/notebooks) with code to generate geospatial tasks, tune evaluator agent if different judge panel is planned, to benchmark the evaluated LLMs on benchmark set.
 - Folders for processing: to [save results](https://github.com/Solirinai/GeoBenchX/tree/main/results) and [scratch folder](https://github.com/Solirinai/GeoBenchX/tree/main/scratch) for tools.
 
