@@ -87,7 +87,7 @@ This benchmark fills a gap in evaluating LLMs on domain-specific tasks that requ
 
 ---
 
-*See our paper for full methodology details and results comparing model performance across different task types (forthcoming). This is the second version of the benchmark. At the previous interation, we benchmarked Sonnet 3.5 and 3.7, Haiku 3.5, Gemini 2.0, GPT-4o, GPT-4o mini, and o3-mini models (avaiable as [GeoBenchX: Benchmarking LLMs for Multistep Geospatial Tasks](https://arxiv.org/abs/2503.18129)).*
+*See [our paper](https://arxiv.org/pdf/2503.18129) for full methodology details and results comparing model performance across different task types. This is the second version of the benchmark. At the previous interation, we benchmarked Sonnet 3.5 and 3.7, Haiku 3.5, Gemini 2.0, GPT-4o, GPT-4o mini, and o3-mini models (avaiable as [GeoBenchX: Benchmarking LLMs for Multistep Geospatial Tasks version 1](https://arxiv.org/pdf/2503.18129v1)).*
 
 
 ## This repository contains:
@@ -114,5 +114,5 @@ BibTeX:
       eprint={2503.18129},
       archivePrefix={arXiv},
       primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2503.18129}, 
+      url={https://arxiv.org/pdf/2503.18129}, 
 }
