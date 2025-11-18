@@ -87,7 +87,7 @@ This benchmark fills a gap in evaluating LLMs on domain-specific tasks that requ
 
 ---
 
-*See [our paper](https://arxiv.org/pdf/2503.18129) for full methodology details and results comparing model performance across different task types. This is the second version of the benchmark. At the previous interation, we benchmarked Sonnet 3.5 and 3.7, Haiku 3.5, Gemini 2.0, GPT-4o, GPT-4o mini, and o3-mini models (avaiable as [GeoBenchX: Benchmarking LLMs for Multistep Geospatial Tasks version 1](https://arxiv.org/pdf/2503.18129v1)).*
+*See [our paper](https://dl.acm.org/doi/pdf/10.1145/3764915#page=31) or [preprint](https://arxiv.org/pdf/2503.18129) for full methodology details and results comparing model performance across different task types. This is the second version of the benchmark. At the previous interation, we benchmarked Sonnet 3.5 and 3.7, Haiku 3.5, Gemini 2.0, GPT-4o, GPT-4o mini, and o3-mini models (avaiable as [GeoBenchX: Benchmarking LLMs for Multistep Geospatial Tasks version 1](https://arxiv.org/pdf/2503.18129v1)).*
 
 
 ## This repository contains:
@@ -107,12 +107,19 @@ If you use this benchmark or code in your research, please cite:
 
 BibTeX:
 ```bibtex
-@misc{krechetova2025geobenchxbenchmarkingllmsmultistep,
-      title={GeoBenchX: Benchmarking LLMs for Multistep Geospatial Tasks}, 
-      author={Varvara Krechetova and Denis Kochedykov},
-      year={2025},
-      eprint={2503.18129},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/pdf/2503.18129}, 
+@inproceedings{10.1145/3764915.3770721,
+author = {Krechetova, Varvara and Kochedykov, Denis},
+title = {GeoBenchX: Benchmarking LLMs in Agent Solving Multistep Geospatial Tasks},
+year = {2025},
+isbn = {9798400722615},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3764915.3770721},
+doi = {10.1145/3764915.3770721},
+booktitle = {Proceedings of the 1st ACM SIGSPATIAL International Workshop on Generative and Agentic AI for Multi-Modality Space-Time Intelligence},
+pages = {27–35},
+numpages = {9},
+keywords = {large language models (LLMs), geospatial analysis, function calling, LLM-as-judge evaluation, GIS tools, benchmarks, spatial reasoning, tool-based agents},
+location = {The Graduate Hotel Minneapolis, Minneapolis, MN, USA},
+series = {GeoGenAgent '25}
 }
