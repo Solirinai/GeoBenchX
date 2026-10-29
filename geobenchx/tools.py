@@ -1279,6 +1279,12 @@ def select_features_by_spatial_relationship(
            # Reproject features to match reference CRS
            features_gdf = features_gdf.to_crs(reference_gdf.crs)            
 
+       # gpd.sjoin refuses inputs that still carry the index column of an earlier join,
+       # which happens whenever a selection is used as the input of another selection.
+       join_columns = ["index_left", "index_right"]
+       features_gdf = features_gdf.drop(columns=[c for c in join_columns if c in features_gdf.columns])
+       reference_gdf = reference_gdf.drop(columns=[c for c in join_columns if c in reference_gdf.columns])
+
        # Initialize an empty GeoDataFrame to store combined results
        selected_features = None
 
@@ -1291,7 +1297,13 @@ def select_features_by_spatial_relationship(
                selected_features = current_selection
            else:
                # Combine with previous results (OR logic)
-               selected_features = pd.concat([selected_features, current_selection]).drop_duplicates()
+               selected_features = pd.concat([selected_features, current_selection])
+
+       # sjoin returns one row per matching reference geometry. Keep each feature once,
+       # so a point inside two overlapping buffers is not counted twice.
+       if selected_features is not None:
+           selected_features = selected_features[~selected_features.index.duplicated(keep="first")]
+           selected_features = selected_features.drop(columns=["index_right"], errors="ignore")
 
        if selected_features is None or len(selected_features) == 0:
            return f"No features found matching any of the spatial predicates: {spatial_predicates}"
@@ -2055,6 +2067,19 @@ def generate_contours_display(
         
         # Read the data into a numpy array
         data = temp_band.ReadAsArray()
+
+        # None means "use the raster's own range", as documented above.
+        if min_value is None or max_value is None:
+            valid = np.isfinite(data) & (data != nodataval)
+            source_nodata = raster_dataset.GetRasterBand(1).GetNoDataValue()
+            if source_nodata is not None:
+                valid &= data != source_nodata
+            if not valid.any():
+                return "Error: the raster has no valid values to contour"
+            if min_value is None:
+                min_value = float(data[valid].min())
+            if max_value is None:
+                max_value = float(data[valid].max())
         
         # Create mask for values outside the range and set them to nodata
         mask = (data < min_value) | (data > max_value) | (data == nodataval)
@@ -2167,24 +2192,22 @@ def generate_contours_display(
             # ax.set_aspect('equal')
             plt.grid(True, linestyle='--', alpha=0.6)
 
-        # Capture the figure as base64 before showing it
-        buf = io.BytesIO()
-        fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
-        buf.seek(0)
-        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
-        buf.close()
+            # Capture the figure as base64 before showing it. Only here: with
+            # plot_result=False no figure exists.
+            buf = io.BytesIO()
+            fig.savefig(buf, format='png', bbox_inches='tight', dpi=150)
+            buf.seek(0)
+            img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+            buf.close()
 
-        # Store the image in the state with metadata
-        state["image_store"].append({
-            "type": "map",
-            "description": f"Created contour lines with interval {contour_interval}.",
-            "base64": img_base64
-        })      
-            
-        if plot_result and "visualize" in state and state["visualize"]:
+            # Store the image in the state with metadata
+            state.setdefault("image_store", []).append({
+                "type": "map",
+                "description": f"Created contour lines with interval {contour_interval}.",
+                "base64": img_base64
+            })
+
             plt.show()
-        else:
-            plt.close()
 
         # Clean up temporary files if requested
         if cleanup_files:
